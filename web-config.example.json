@@ -1,0 +1,10 @@
+{
+  "data_dir": "/home/tane/dev/PicoW/PicoW_Youtube_Player/data",
+  "web_host": "192.168.0.120",
+  "web_port": 16152,
+  "tcp_host": "192.168.0.120",
+  "tcp_port": 16151,
+  "yt_dlp": "/usr/local/bin/yt-dlp",
+  "ffmpeg": "/usr/local/bin/ffmpeg",
+  "ffprobe": "/usr/local/bin/ffprobe"
+}

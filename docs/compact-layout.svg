@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="750" viewBox="0 0 1100 750" role="img" aria-label="背中合わせユニバーサル基板の表裏、液晶表示面とPico部品面の概念配置">
+ <rect width="1100" height="750" fill="#f8fafc"/>
+ <style>text{font:16px sans-serif;fill:#142033}.title{font-size:23px;font-weight:bold}.head{font-size:18px;font-weight:bold}.small{font-size:14px}.board{fill:#e2e8f0;stroke:#334155;stroke-width:2}.part{fill:#fff;stroke:#475569;stroke-width:2}.line{stroke:#2563eb;stroke-width:2;fill:none}.warn{fill:#b45309}</style>
+ <text class="title" x="30" y="38">背中合わせ・ユニバーサル基板の概念配置（寸法未確定）</text>
+ <g transform="translate(25 65)">
+  <text class="head" x="5" y="22">上面＝液晶表示面から見る</text>
+  <rect class="board" x="0" y="38" width="510" height="285" rx="12"/>
+  <rect class="part" x="145" y="77" width="220" height="130" rx="8"/>
+  <text x="211" y="147">LCD 表示面</text>
+  <text class="small" x="125" y="240">LCD端子の実位置は現物確認</text>
+  <text class="small" x="125" y="263">GND VCC SCL SDA RES DC CS BLK</text>
+  <text class="warn" x="125" y="291">BLK → 専用パッド・3V3ジャンパ開放</text>
+ </g>
+ <g transform="translate(565 65)">
+  <text class="head" x="5" y="22">はんだ面＝Pico部品面側から見る</text>
+  <rect class="board" x="0" y="38" width="510" height="285" rx="12"/>
+  <rect class="part" x="143" y="72" width="225" height="200" rx="8"/>
+  <text x="230" y="98">USB ↑</text><text x="204" y="136">Pico W</text>
+  <text class="small" x="167" y="175">1〜20</text><text class="small" x="305" y="175">21〜40</text>
+  <text class="small" x="166" y="239">12〜17: 信号</text><text class="small" x="285" y="239">36: 3V3</text>
+  <text class="small" x="25" y="302">上面から透視した列は左右逆。USBと物理1番を照合。</text>
+ </g>
+ <path class="line" d="M490 410 H610"/><path class="line" d="m595 400 15 10 -15 10"/>
+ <text class="small" x="443" y="440">基板を裏返す（左右反転）</text>
+ <g transform="translate(25 475)">
+  <text class="head" x="5" y="22">Pico部品面（単体の基準）</text>
+  <rect class="part" x="155" y="37" width="215" height="194" rx="8"/>
+  <text x="225" y="65">USB ↑</text><text x="209" y="105">Pico W</text>
+  <text class="small" x="168" y="147">1〜20</text><text class="small" x="300" y="147">21〜40</text>
+  <text class="small" x="168" y="183">12 GP9 / 14 GP10 / 15 GP11</text>
+  <text class="small" x="168" y="207">16 GP12 / 17 GP13</text>
+ </g>
+ <g transform="translate(565 475)">
+  <text class="head" x="5" y="22">接続ネット（レイアウト縮尺なし）</text>
+  <text x="10" y="63">CS ← 12/GP9　SCL ← 14/GP10</text>
+  <text x="10" y="96">SDA ← 15/GP11　DC ← 16/GP12</text>
+  <text x="10" y="129">RES ← 17/GP13　GND ← 13 または 18</text>
+  <text x="10" y="162">VCC ← 36/3V3（反対側から）</text>
+  <text class="warn" x="10" y="195">BLK ← 開放ジャンパ ← 36/3V3（同等回路なら）</text>
+ </g>
+</svg>

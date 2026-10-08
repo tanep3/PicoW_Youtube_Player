@@ -1,0 +1,179 @@
+--- upstream/cyw43_ll.c
++++ diagnostics/cyw43_ll.c
+@@ -42,6 +42,7 @@
+ #include "cyw43_ll.h"
+ #include "cyw43_internal.h"
+ #include "cyw43_stats.h"
++#include "../../cyw43_diag.h"
+ 
+ #include CYW43_WIFI_NVRAM_INCLUDE_FILE
+ 
+@@ -626,6 +627,20 @@
+     uint8_t reserved[2];
+ };
+ 
++static size_t diag_safe_rx_len(cyw43_int_t *self, const uint8_t *ptr, size_t reported) {
++    // A malformed SDPCM header can report an excessive length. Never let the
++    // diagnostic parser read outside the driver's fixed SPI buffer.
++    uintptr_t base = (uintptr_t)self->spid_buf;
++    uintptr_t at = (uintptr_t)ptr;
++    if (at < base || at >= base + sizeof(self->spid_buf)) return 0;
++    size_t available = sizeof(self->spid_buf) - (size_t)(at - base);
++    return reported < available ? reported : available;
++}
++
++size_t cyw43_diag_bound_eth(void *ll, const uint8_t *frame, size_t reported) {
++    return diag_safe_rx_len(CYW_INT_FROM_LL((cyw43_ll_t *)ll), frame, reported);
++}
++
+ // buf must be writable and have:
+ //  - SDPCM_HEADER_LEN bytes at the start for writing the headers
+ //  - readable data at the end for padding to get to 64 byte alignment
+@@ -640,6 +655,15 @@
+     // Wait until we are allowed to send
+     // Credits are 8-bit unsigned integers that roll over, so we are stalled while they are equal
+     if (self->wlan_flow_control || self->wwd_sdpcm_last_bus_data_credit == self->wwd_sdpcm_packet_transmit_sequence_number) {
++        // Diagnostic only: snapshot the Ethernet header before RX can reuse spid_buf.
++        const uint8_t *tx_eth = buf + SDPCM_HEADER_LEN + 6;
++        size_t tx_eth_len = kind == DATA_HEADER && len > 6 ? len - 6 : 0;
++        cyw43_diag_tcp tx_tcp = {0};
++        bool tx_valid = tx_eth_len && cyw43_diag_parse_tcp(tx_eth, tx_eth_len, &tx_tcp);
++        uint8_t tx_class = kind == CONTROL_HEADER ? CYW43_DIAG_TX_CONTROL :
++                           cyw43_diag_classify_tx(tx_eth, tx_eth_len);
++        uint32_t tx_fingerprint = tx_eth_len ? cyw43_diag_fingerprint(tx_eth, tx_eth_len) : 0;
++        cyw43_diag_wait_enter(tx_class);
+         CYW43_VDEBUG("[CYW43;%u] STALL(%u;%u-%u)\n", (int)cyw43_hal_ticks_ms(), self->wlan_flow_control, self->wwd_sdpcm_packet_transmit_sequence_number, self->wwd_sdpcm_last_bus_data_credit);
+ 
+         uint32_t start_us = cyw43_hal_ticks_us();
+@@ -668,6 +692,8 @@
+             if (ret == ASYNCEVENT_HEADER) {
+                 cyw43_cb_process_async_event(self, cyw43_ll_parse_async_event(res_len, res_buf));
+             } else if (ret == DATA_HEADER) {
++                cyw43_diag_credit_drop(res_buf, diag_safe_rx_len(self, res_buf, res_len & 0x7fffffffu), tx_class,
++                                       cyw43_hal_ticks_ms());
+                 // Don't process it due to possible reentrancy issues (eg sending another ETH as part of the reception)
+                 // printf("STALL: not processing ethernet packet\n");
+                 // cyw43_tcpip_process_ethernet(self, res_len, res_buf);
+@@ -679,11 +705,19 @@
+                 break;
+             }
+             if (cur_us - start_us > 1000000) {
++                cyw43_diag_wait_finish(cyw43_hal_ticks_us() - start_us, true);
++                if (tx_eth_len && tx_fingerprint != cyw43_diag_fingerprint(tx_eth, tx_eth_len))
++                    cyw43_diag_tx_clobber(tx_valid ? &tx_tcp : NULL,
++                                           tx_class | 0x80u, cyw43_hal_ticks_ms());
+                 CYW43_WARN("STALL(%u;%u-%u): timeout\n", self->wlan_flow_control, self->wwd_sdpcm_packet_transmit_sequence_number, self->wwd_sdpcm_last_bus_data_credit);
+                 return CYW43_FAIL_FAST_CHECK(-CYW43_ETIMEDOUT);
+             }
+             CYW43_SDPCM_SEND_COMMON_WAIT;
+         }
++        cyw43_diag_wait_finish(cyw43_hal_ticks_us() - start_us, false);
++        if (tx_eth_len && tx_fingerprint != cyw43_diag_fingerprint(tx_eth, tx_eth_len))
++            cyw43_diag_tx_clobber(tx_valid ? &tx_tcp : NULL, tx_class,
++                                   cyw43_hal_ticks_ms());
+     }
+ 
+     size_t size = SDPCM_HEADER_LEN + len;
+@@ -814,11 +848,13 @@
+     const struct sdpcm_header_t *header = (const void *)buf;
+     if (header->size != (~header->size_com & 0xffff)) {
+         // invalid packet, just ignore it
++        cyw43_diag_sdpcm_invalid();
+         CYW43_DEBUG("Ignoring invalid packet\n");
+         return -2;
+     }
+     if (header->size < SDPCM_HEADER_LEN) {
+         // packet too small, just ignore it
++        cyw43_diag_sdpcm_invalid();
+         CYW43_DEBUG("Ignoring too small packet\n");
+         return -3;
+     }
+@@ -879,6 +915,7 @@
+         case DATA_HEADER: {
+             if (header->size <= SDPCM_HEADER_LEN + BDC_HEADER_LEN) {
+                 // packet too small, just ignore it
++                cyw43_diag_sdpcm_invalid();
+                 CYW43_DEBUG("Ignoring too small data packet\n");
+                 return -7;
+             }
+@@ -975,6 +1012,7 @@
+     }
+     self->had_successful_packet = true;
+     if ((hdr[0] ^ hdr[1]) != 0xffff) {
++        cyw43_diag_sdpcm_invalid();
+         CYW43_WARN("error: hdr mismatch %04x ^ %04x\n", hdr[0], hdr[1]);
+         return -1;
+     }
+@@ -1106,6 +1144,7 @@
+     }
+     CYW43_VDEBUG("bus_gspi_status 0x%x 0x%x\n", bus_gspi_status, bus_gspi_status >> 9);
+     if (bus_gspi_status == 0xFFFFFFFF) {
++        cyw43_diag_spi_status_invalid();
+         return -1;
+     }
+ 
+@@ -1114,6 +1153,7 @@
+         bytes_pending = (bus_gspi_status >> 9) & 0x7FF;
+         if (bytes_pending == 0 || bytes_pending > (LINK_MTU - GSPI_PACKET_OVERHEAD) ||
+             bus_gspi_status & F2_F3_FIFO_RD_UNDERFLOW) {
++            cyw43_diag_spi_status_invalid();
+             CYW43_DEBUG("SPI invalid bytes pending %" PRIu32 "\n", bytes_pending);
+             cyw43_write_reg_u8(self, BACKPLANE_FUNCTION, SPI_FRAME_CONTROL, (1 << 0));
+             self->had_successful_packet = false;
+@@ -1127,6 +1167,7 @@
+     }
+     int ret = cyw43_read_bytes(self, WLAN_FUNCTION, 0, bytes_pending, self->spid_buf);
+     if (ret != 0) {
++        cyw43_diag_spi_read_error();
+         return ret;
+     }
+     #pragma GCC diagnostic push
+@@ -1163,6 +1204,7 @@
+         } else if (ret == ASYNCEVENT_HEADER) {
+             cyw43_cb_process_async_event(self, cyw43_ll_parse_async_event(len, buf));
+         } else if (ret == DATA_HEADER) {
++            cyw43_diag_normal_rx(buf, diag_safe_rx_len(self, buf, len & 0x7fffffffu), cyw43_hal_ticks_ms());
+             cyw43_cb_process_ethernet(self->cb_data, len >> 31, len & 0x7fffffff, buf);
+         } else if (CYW43_USE_SPI && ret == CYW43_ERROR_WRONG_PAYLOAD_TYPE) {
+             // Ignore this error when using the SPI interface.  It can occur when there
+@@ -1200,6 +1242,7 @@
+         } else if (ret == ASYNCEVENT_HEADER) {
+             cyw43_cb_process_async_event(self, cyw43_ll_parse_async_event(res_len, res_buf));
+         } else if (ret == DATA_HEADER) {
++            cyw43_diag_normal_rx(res_buf, diag_safe_rx_len(self, res_buf, res_len & 0x7fffffffu), cyw43_hal_ticks_ms());
+             cyw43_cb_process_ethernet(self->cb_data, res_len >> 31, res_len & 0x7fffffff, res_buf);
+         } else if (ret >= 0) {
+             CYW43_WARN("do_ioctl: got unexpected packet %d\n", ret);
+--- upstream/cyw43_lwip.c
++++ diagnostics/cyw43_lwip.c
+@@ -35,6 +35,7 @@
+ 
+ #include "cyw43.h"
+ #include "cyw43_stats.h"
++#include "../../cyw43_diag.h"
+ #if CYW43_LWIP
+ #include "lwip/etharp.h"
+ #include "lwip/ethip6.h"
+@@ -265,6 +266,7 @@
+ 
+ void cyw43_cb_process_ethernet(void *cb_data, int itf, size_t len, const uint8_t *buf) {
+     cyw43_t *self = cb_data;
++    cyw43_diag_lwip_rx();
+     struct netif *netif = &self->netif[itf];
+     #if CYW43_NETUTILS
+     if (self->trace_flags) {
+@@ -276,9 +278,14 @@
+         if (p != NULL) {
+             pbuf_take(p, buf, len);
+             if (netif->input(p, netif) != ERR_OK) {
++                cyw43_diag_netif_input_fail();
+                 pbuf_free(p);
+             }
+             CYW43_STAT_INC(PACKET_IN_COUNT);
++        } else {
++            cyw43_diag_pbuf_fail(buf,
++                                  cyw43_diag_bound_eth(&self->cyw43_ll, buf, len),
++                                  cyw43_hal_ticks_ms());
+         }
+     }
+ }

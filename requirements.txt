@@ -1,0 +1,2 @@
+# Compatibility for existing pip install -r requirements.txt commands.
+-r server/requirements.txt

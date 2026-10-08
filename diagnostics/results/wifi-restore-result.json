@@ -1,0 +1,19 @@
+{
+  "server_ip": "192.168.0.120",
+  "server_bind": "192.168.0.120",
+  "port": 16151,
+  "fps": 6,
+  "pico_ip": "192.168.0.173",
+  "pico_sta_mac": "28:cd:c1:09:78:41",
+  "flash_id": "0xE661640843239D21",
+  "uf2_sha256": "7be46fb51d43beb4c4cd095c9b309c7c16f5b0e95a4b00d8ab698b7022b81380",
+  "flash_verify": "100% OK",
+  "policy_rule_removed": true,
+  "table_16151_empty": true,
+  "wifi_ip_default_dns_unchanged": true,
+  "capture_packets": {
+    "wlan0 In": 63,
+    "wlan0 Out": 137
+  },
+  "temporary_eth_profile_cleanup": "waiting for NAS cable return confirmation"
+}

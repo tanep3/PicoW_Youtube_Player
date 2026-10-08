@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="420" viewBox="0 0 920 420" role="img" aria-label="Pico W と液晶の配線。BLKは未接続">
+ <rect width="920" height="420" fill="#f8fafc"/>
+ <style>text{font:16px sans-serif;fill:#172033}.title{font-size:23px;font-weight:bold}.small{font-size:14px}.box{fill:white;stroke:#334155;stroke-width:2}.line{stroke:#3b82f6;stroke-width:3}.warn{fill:#b45309}</style>
+ <text x="32" y="42" class="title">Pico W → 80×160 IPS 液晶（横向き160×80）</text>
+ <rect class="box" x="35" y="70" width="305" height="322" rx="12"/>
+ <rect class="box" x="585" y="70" width="300" height="322" rx="12"/>
+ <text x="72" y="98">Pico W</text><text x="620" y="98">LCD (8 pin)</text>
+ <g class="line">
+  <path d="M340 125H585"/><path d="M340 161H585"/><path d="M340 197H585"/>
+  <path d="M340 233H585"/><path d="M340 269H585"/><path d="M340 305H585"/><path d="M340 341H585"/>
+ </g>
+ <g>
+  <text x="72" y="131">物理38 / GND</text><text x="620" y="131">GND</text>
+  <text x="72" y="167">物理36 / 3V3(OUT)</text><text x="620" y="167">VCC</text>
+  <text x="72" y="203">物理24 / GP18 SPI0 SCK</text><text x="620" y="203">SCL</text>
+  <text x="72" y="239">物理25 / GP19 SPI0 TX</text><text x="620" y="239">SDA</text>
+  <text x="72" y="275">物理27 / GP21</text><text x="620" y="275">RES</text>
+  <text x="72" y="311">物理26 / GP20</text><text x="620" y="311">DC</text>
+  <text x="72" y="347">物理22 / GP17</text><text x="620" y="347">CS</text>
+  <text x="620" y="381" class="warn">BLK：現在未接続・基板仕様未確認</text>
+ </g>
+</svg>

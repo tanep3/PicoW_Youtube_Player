@@ -1,0 +1,5 @@
+build/
+config.h
+__pycache__/
+.pytest_cache/
+data/
