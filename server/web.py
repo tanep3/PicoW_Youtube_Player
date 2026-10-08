@@ -12,11 +12,11 @@ from .media import MediaJobs
 from .playback import Playback
 
 class Application:
-    def __init__(self, data_dir, yt_dlp="/usr/local/bin/yt-dlp", ffmpeg="/usr/local/bin/ffmpeg", ffprobe="/usr/local/bin/ffprobe"):
+    def __init__(self, data_dir, yt_dlp="/usr/local/bin/yt-dlp", ffmpeg="/usr/local/bin/ffmpeg", ffprobe="/usr/local/bin/ffprobe", node=None):
         self.lock = threading.RLock()
         self.library = Library(data_dir)
         self.playback = Playback(self.library, self.lock)
-        self.jobs = MediaJobs(self.library, self.playback, self.lock, yt_dlp, ffmpeg, ffprobe)
+        self.jobs = MediaJobs(self.library, self.playback, self.lock, yt_dlp, ffmpeg, ffprobe, node)
         saved = self.library.preference("current")
         if saved:
             conversion = self.library.conversion(saved)
@@ -143,7 +143,7 @@ def main():
     parser.add_argument("--config", type=Path, help="optional JSON configuration")
     known, _ = parser.parse_known_args()
     defaults = json.loads(known.config.read_text()) if known.config else {}
-    allowed = {"data_dir", "web_host", "web_port", "tcp_host", "tcp_port", "yt_dlp", "ffmpeg", "ffprobe"}
+    allowed = {"data_dir", "web_host", "web_port", "tcp_host", "tcp_port", "yt_dlp", "ffmpeg", "ffprobe", "node"}
     if set(defaults) - allowed:
         parser.error("unknown configuration keys")
     parser.add_argument("--data-dir", type=Path, default=Path(__file__).resolve().parents[1]/"data")
@@ -155,6 +155,7 @@ def main():
     parser.add_argument("--yt-dlp", default="/usr/local/bin/yt-dlp")
     parser.add_argument("--ffmpeg", default="/usr/local/bin/ffmpeg")
     parser.add_argument("--ffprobe", default="/usr/local/bin/ffprobe")
+    parser.add_argument("--node", default=shutil.which("node"), help="existing Node executable for yt-dlp JS challenges")
     parser.set_defaults(**defaults)
     args = parser.parse_args()
     if any(port in (8080, 16150) for port in (args.web_port, args.tcp_port)):
@@ -164,7 +165,9 @@ def main():
     for command in (args.yt_dlp, args.ffmpeg, args.ffprobe):
         if not shutil.which(command):
             parser.error(f"tool unavailable: {command}")
-    app = Application(args.data_dir, args.yt_dlp, args.ffmpeg, args.ffprobe)
+    if args.node and not shutil.which(args.node):
+        parser.error(f"Node unavailable: {args.node}")
+    app = Application(args.data_dir, args.yt_dlp, args.ffmpeg, args.ffprobe, args.node)
     server = None
     try:
         if not args.no_tcp:

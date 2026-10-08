@@ -1,0 +1,19 @@
+[Unit]
+Description=Pico W YouTube video player
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=tane
+WorkingDirectory=/home/tane/dev/PicoW/PicoW_Youtube_Player
+ExecStart=/usr/bin/python3 -m server.web --config /home/tane/dev/PicoW/PicoW_Youtube_Player/web-config.json
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

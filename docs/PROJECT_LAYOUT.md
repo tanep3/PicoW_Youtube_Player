@@ -52,7 +52,7 @@ LCDパターンは`python3 -m diagnostics.server.lcd_pattern --help`。通常配
 
 ```sh
 cmake -S . -B /tmp/picow_build -DPICO_BOARD=pico_w \
-  -DCMAKE_BUILD_TYPE=Release -DDISPLAY_PROFILE=0 -DPLAYER_CYW43_DIAG=OFF
+  -DCMAKE_BUILD_TYPE=Release -DDISPLAY_PROFILE=0 -DPLAYER_LCD_GAMMA_LGFX=ON -DPLAYER_CYW43_DIAG=OFF
 cmake --build /tmp/picow_build --clean-first -j2
 ```
 
@@ -71,3 +71,5 @@ cmake --build /tmp/picow_build --clean-first -j2
 稼働中の配信はソースをメモリへ読み込み済みなので移動に再起動は不要。稼働PIDを継続照合し、ファーム再転送やサービス再起動は行わない。次回の通常起動は新CLIまたは互換入口を使用できる。
 
 NASケーブル返却未確認のため、一時有線プロファイルの後片付けは引き続き待機する。
+
+採用したLCDガンマ表は `pico/lcd_gamma_lgfx.h`。通常ビルド既定ON、通信診断オプションとは独立です。既存CMakeキャッシュがOFFの場合はONを明示してください。

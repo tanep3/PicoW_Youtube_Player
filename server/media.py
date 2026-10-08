@@ -13,15 +13,18 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 from PIL import Image
-from .library import (FPS_CHOICES, FRAME_BYTES, CROP, CONDITIONS, BusyError,
+from .library import (FPS_CHOICES, FRAME_BYTES, FIT, CONDITIONS, BusyError,
                       cache_key, source_key, video_url, interval)
-from .streamer import compensate_inversion_and_bgr
+from .frame_cache import frame_name, JPEG_LIMIT
 
 class Cancelled(Exception):
     pass
 
+class DownloadForbidden(ValueError):
+    pass
+
 class MediaJobs:
-    def __init__(self, library, playback, lock, yt_dlp="yt-dlp", ffmpeg="ffmpeg", ffprobe="ffprobe"):
+    def __init__(self, library, playback, lock, yt_dlp="yt-dlp", ffmpeg="ffmpeg", ffprobe="ffprobe", node=None):
         self.library, self.playback, self.lock = library, playback, lock
         self.yt_dlp, self.ffmpeg, self.ffprobe = yt_dlp, ffmpeg, ffprobe
         self.job = None
@@ -29,6 +32,9 @@ class MediaJobs:
         self.process = None
         self.process_lock = threading.Lock()
         self.worker = None
+        self.node = node or shutil.which("node")
+        self.https_supported = None
+        self.https_signature = None
 
     def state(self):
         with self.lock:
@@ -109,7 +115,12 @@ class MediaJobs:
                 if p.returncode:
                     err.seek(0)
                     detail = err.read(8000).decode(errors="replace")
+                    out.seek(0)
+                    detail = out.read(8000).decode(errors="replace") + "\n" + detail
                     detail = re.sub(r"https?://\S+", "[URL]", detail)
+                    print(f"Media tool failed: {Path(argv[0]).name}\n{detail[-2000:].strip()}", flush=True)
+                    if re.search(r"(?:HTTP (?:error )?|HTTP Error )403|403 Forbidden", detail, re.I):
+                        raise DownloadForbidden("YouTubeが動画の取得URLを拒否しました（HTTP 403）。現在の再生は続きます。")
                     raise ValueError(f"{Path(argv[0]).name} の処理失敗: {detail[-700:].strip()}")
                 out.seek(0)
                 return out.read(8_000_000).decode(errors="replace")
@@ -155,29 +166,65 @@ class MediaJobs:
         except (OSError, ValueError):
             pass  # A missing picture never blocks valid media.
 
+    def _yt_base(self):
+        args = [self.yt_dlp, "--ignore-config", "--no-playlist", "--no-warnings",
+                "--socket-timeout", "15", "--retries", "2",
+                "--ffmpeg-location", str(Path(self.ffmpeg).parent)]
+        # yt-dlp enables Deno by default, so explicitly enable the installed Node.
+        if self.node:
+            args += ["--js-runtimes", "node:" + self.node]
+        return args
+
     def _download(self, job, start, end, duration, work):
         full = start == 0 and end == duration
+        if not full and job["url"].startswith("https:"):
+            executable = Path(self.ffmpeg)
+            signature = (executable.stat().st_mtime_ns, executable.stat().st_size)
+            if self.https_signature != signature:
+                protocols = self._run([self.ffmpeg, "-hide_banner", "-protocols"])
+                self.https_supported = "https" in {line.strip() for line in protocols.splitlines()}
+                self.https_signature = signature
+            if not self.https_supported:
+                raise ValueError("指定区間の取得に必要なffmpegのHTTPS機能がありません。更新担当による修正が必要です。全編取得は利用できます。")
         self._update(stage="download", progress=0, message="全編を取得しています" if full else "指定区間を取得しています（前後1秒の精密切出し用余白を含む）")
         # A 1-second guard means ffmpeg can trim using the source's explicit origin.
         # The requested clip is never replaced by a silently fixed duration.
         origin, covered_end = (0, duration) if full else (max(0, start-1), min(duration, end+1))
-        argv = [self.yt_dlp, "--ignore-config", "--no-playlist", "--no-warnings", "--socket-timeout", "15",
-                "--retries", "2", "--fragment-retries", "2", "--no-progress", "--no-part",
-                "-f", "bv[height<=720]/b[height<=720]/bestvideo/best",
-                "-o", str(work / "source.%(ext)s"), "--print", "after_move:filepath"]
+        argv = self._yt_base() + ["--check-formats", "--fragment-retries", "2", "--no-progress", "--no-part",
+                "-f", "bv/b",
+                "-S", "res:240,vcodec:h264",
+                "-o", str(work / "source.%(ext)s")]
         if not full:
             argv += ["--download-sections", f"*{origin:.3f}-{covered_end:.3f}", "--force-keyframes-at-cuts",
                      "--downloader-args", "ffmpeg_o:-threads 2"]
         argv.append(job["url"])
-        self._run(argv, timeout=7200)
+        try:
+            self._run(argv, timeout=7200)
+        except DownloadForbidden:
+            # Re-extract fresh URLs once and use the ordinary HLS alternative.
+            # Preserve resolution preference, clip boundaries, and current play.
+            self._update(message="取得URLが拒否されたため、低解像度HLSで1回再試行しています", retry=1)
+            for path in work.glob("source.*"):
+                if path.is_file():
+                    path.unlink()  # Only this job's unregistered, incomplete download.
+            retry_argv = list(argv)
+            retry_argv[retry_argv.index("-f")+1] = "bv[protocol^=m3u8]/b[protocol^=m3u8]"
+            self._run(retry_argv, timeout=7200)
         files = [p for p in work.glob("source.*") if p.suffix not in (".part", ".ytdl")]
         if len(files) != 1:
             raise ValueError("取得した動画ファイルを特定できません")
         probe = self.probe(files[0])
-        # Allow a source frame of rounding, never invent coverage beyond actual media.
-        measured_end = min(covered_end, origin + probe["duration"])
-        if measured_end + 0.1 < end:
-            raise ValueError("取得区間が指定した終了時刻まで届いていません")
+        # A clip ending at metadata EOF has the same whole-second rounding as a
+        # full download. Keep measured partial coverage and duration for trimming.
+        actual_end = origin + probe["duration"]
+        measured_end = covered_end if full else min(covered_end, actual_end)
+        at_metadata_end = end == duration
+        tolerance = 1.0 if at_metadata_end else 0.1
+        self._update(source_duration=probe["duration"], actual_source_end=actual_end,
+                     requested_end=end, eof_rounding=at_metadata_end and actual_end < end)
+        if actual_end + tolerance < end:
+            raise ValueError(f"取得区間が終了まで届いていません（指定{end:.3f}秒、"
+                             f"実測終端{actual_end:.3f}秒、不足{end-actual_end:.3f}秒）")
         key = source_key(job["video_id"], origin, covered_end, full)
         folder = self.library.video_dir(job["video_id"]) / "sources"
         folder.mkdir(exist_ok=True)
@@ -193,53 +240,76 @@ class MediaJobs:
 
     def convert(self, source, identifier, start, end, fps, work):
         key = cache_key(identifier, start, end, fps)
-        self._update(stage="convert", message="160×80 RGB565へ変換しています", progress=0)
-        temp = work / (key + ".rgb565")
-        filters = CROP + f",scale=160:80:flags=bicubic,fps={fps},setpts=PTS-STARTPTS"
+        self._update(stage="convert", message="160×80 JPEGへ変換しています", progress=0)
+        frames_dir = work / (key + "-frames")
+        frames_dir.mkdir()
+        filters = FIT + f",fps={fps},setpts=PTS-STARTPTS"
         argv = ["nice", "-n", "10", self.ffmpeg, "-v", "error", "-nostdin", "-threads", "2", "-filter_threads", "1",
                 "-ss", f"{start-source['origin']:.3f}", "-i", str(self.library.path(source["path"])),
                 "-t", f"{end-start:.3f}", "-map", "0:v:0", "-an", "-sn", "-dn", "-vf", filters,
-                "-pix_fmt", "rgb565be", "-f", "rawvideo", "pipe:1"]
+                "-c:v", "mjpeg", "-q:v", "5", "-pix_fmt", "yuvj420p", "-f", "image2",
+                "-progress", "pipe:1", str(frames_dir / "frame%08d.jpg")]
         import tempfile
-        with tempfile.TemporaryFile() as err, temp.open("wb") as output:
-            p = self._spawn(argv, stdout=subprocess.PIPE, stderr=err)
-            frames = 0
+        with tempfile.TemporaryFile() as err:
+            process = self._spawn(argv, stdout=subprocess.PIPE, stderr=err, text=True)
             try:
-                while True:
+                for line in process.stdout:
                     self._check()
-                    chunk = p.stdout.read(FRAME_BYTES)
-                    if not chunk:
-                        break
-                    if len(chunk) != FRAME_BYTES:
-                        raise ValueError("変換結果のフレーム長が不正です")
-                    output.write(compensate_inversion_and_bgr(chunk))
-                    frames += 1
-                    if frames % fps == 0:
-                        self._update(progress=min(99, round(100 * frames / (fps*(end-start)))))
-                p.wait(timeout=10)
+                    if line.startswith("frame="):
+                        count = int(line.split("=", 1)[1])
+                        self._update(progress=min(95, round(95 * count / (fps*(end-start)))))
+                process.wait(timeout=10)
                 self._check()
-                if p.returncode:
-                    raise ValueError("ffmpegの変換に失敗しました")
-                if not frames or abs(frames/fps - (end-start)) > max(0.11, 1.1/fps):
-                    raise ValueError("変換映像の長さが指定区間と一致しません")
-                output.flush()
-                os.fsync(output.fileno())
+                if process.returncode:
+                    err.seek(0)
+                    raise ValueError("JPEG変換に失敗しました: " + err.read(1000).decode(errors="replace"))
             finally:
-                if p.poll() is None:
-                    os.killpg(p.pid, signal.SIGKILL)
-                    p.wait()
-                p.stdout.close()
-                self._finish_process(p)
+                if process.poll() is None:
+                    process.kill()
+                    process.wait()
+                process.stdout.close()
+                self._finish_process(process)
+        paths = sorted(frames_dir.iterdir())
+        frames = len(paths)
+        available = min(end-start, source.get("duration", end-source["origin"]) + source["origin"] - start)
+        if not frames or abs(frames/fps - available) > max(0.11, 1.1/fps):
+            raise ValueError("変換映像の長さが指定区間と一致しません")
+        total_bytes = 0
+        for i, path in enumerate(paths):
+            self._check()
+            if path.name != frame_name(i) or not 4 <= path.stat().st_size <= JPEG_LIMIT:
+                raise ValueError("JPEG連番またはフレームサイズが不正です")
+            with Image.open(path) as image:
+                if image.format != "JPEG" or image.size != (160, 80):
+                    raise ValueError("JPEGフレームの寸法が不正です")
+                image.verify()
+            total_bytes += path.stat().st_size
+            if i % max(1, fps) == 0:
+                self._update(progress=95 + round(4 * (i+1) / frames))
         folder = self.library.video_dir(identifier) / "converted"
         folder.mkdir(exist_ok=True)
-        target = folder / (key + ".rgb565")
+        target = folder / key
         self._check()
-        temp.replace(target)
-        conversion = {"key": key, "video_id": identifier, "start": start, "end": end, "fps": fps,
-                      "path": str(target.relative_to(self.library.root)), "bytes": target.stat().st_size,
-                      "frames": frames, "conditions": json.dumps(CONDITIONS, sort_keys=True), "created": time.time()}
-        with self.library.db() as db:
-            db.execute("INSERT OR REPLACE INTO conversions VALUES(:key,:video_id,:start,:end,:fps,:path,:bytes,:frames,:conditions,:created)", conversion)
+        # Replace a previous generated folder only after the new frames pass checks.
+        # Keep it until both publication and database registration succeed.
+        previous = work / (key + "-previous")
+        if target.exists():
+            target.rename(previous)
+        try:
+            frames_dir.rename(target)
+            conversion = {"key": key, "video_id": identifier, "start": start, "end": end, "fps": fps,
+                          "path": str(target.relative_to(self.library.root)), "bytes": total_bytes,
+                          "frames": frames, "conditions": json.dumps(CONDITIONS, sort_keys=True), "created": time.time()}
+            with self.library.db() as db:
+                db.execute("INSERT OR REPLACE INTO conversions VALUES(:key,:video_id,:start,:end,:fps,:path,:bytes,:frames,:conditions,:created)", conversion)
+        except BaseException:
+            if target.exists():
+                shutil.rmtree(target)
+            if previous.exists():
+                previous.rename(target)
+            raise
+        if previous.exists():
+            shutil.rmtree(previous)
         return conversion
 
     def _work(self, job):
@@ -248,8 +318,7 @@ class MediaJobs:
         try:
             video = self.library.video(job["video_id"])
             if not video:
-                info = json.loads(self._run([self.yt_dlp, "--ignore-config", "--no-playlist", "--no-warnings",
-                    "--socket-timeout", "15", "--retries", "2", "--skip-download", "--dump-single-json", job["url"]]))
+                info = json.loads(self._run(self._yt_base() + ["--skip-download", "--dump-single-json", job["url"]]))
                 if info.get("id") != job["video_id"] or info.get("_type") == "playlist":
                     raise ValueError("単一動画の情報を取得できません")
                 video = self.library.save_video(job["video_id"], job["url"], info)

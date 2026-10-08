@@ -5,6 +5,7 @@ import threading
 import time
 from .library import FRAME_BYTES
 from .streamer import packet, read_status
+from .frame_cache import FrameReader
 
 class Playback:
     def __init__(self, library, lock):
@@ -20,6 +21,7 @@ class Playback:
         self.listener = None
         self.thread = None
         self.force_first = False
+        self.last_decode_us = self.max_decode_us = 0
 
     def select(self, conversion):
         with self.lock:
@@ -52,7 +54,8 @@ class Playback:
                 current["position"] = (elapsed * current["fps"] % current["frames"]) / current["fps"]
                 current["loop"] = int(elapsed * current["fps"] / current["frames"])
             return {"current": current, "connected": self.connected, "sent": self.sent,
-                    "timeouts": self.timeouts, "connections": self.connections, "error": self.last_error}
+                    "timeouts": self.timeouts, "connections": self.connections, "error": self.last_error,
+                    "decode_us": self.last_decode_us, "decode_max_us": self.max_decode_us}
 
     def start(self, host, port):
         self.listener = socket.socket()
@@ -77,9 +80,15 @@ class Playback:
                 self.connections += 1
             print(f"Web player Pico connected: {peer}", flush=True)
             conn.settimeout(2)
-            threading.Thread(target=read_status, args=(conn, False), daemon=True).start()
+            peer_closed = threading.Event()
+            def statuses(connection=conn, done=peer_closed):
+                try:
+                    read_status(connection, False)
+                finally:
+                    done.set()
+            threading.Thread(target=statuses, daemon=True).start()
             try:
-                self._stream(conn)
+                self._stream(conn, peer_closed)
             except TimeoutError:
                 with self.lock:
                     self.timeouts += 1
@@ -94,22 +103,29 @@ class Playback:
                 with self.lock:
                     self.connected, self.conn = False, None
 
-    def _stream(self, conn):
+    def _stream(self, conn, peer_closed=None):
         opened_generation, source, next_sequence = None, None, 0
         try:
             while not self.closed.is_set():
+                if peer_closed is not None and peer_closed.is_set():
+                    return
                 with self.lock:
                     current, generation, started = self.current, self.generation, self.started
                     first = self.force_first
                 if not current:
+                    if opened_generation is not None:
+                        return
                     self.closed.wait(0.05)
                     continue
                 if generation != opened_generation:
-                    if source:
-                        source.close()
-                    source = self.library.path(current["path"]).open("rb")
-                    opened_generation = generation
-                    next_sequence = 0
+                    with self.lock:
+                        if self.generation != generation:
+                            continue
+                        if source:
+                            source.close()
+                        source = FrameReader(self.library.path(current["path"]), current)
+                        opened_generation = generation
+                        next_sequence = 0
                 due = int(max(0, time.monotonic() - started) * current["fps"])
                 if first:
                     sequence = 0
@@ -118,10 +134,10 @@ class Playback:
                         self.closed.wait(min(0.03, (next_sequence-due)/current["fps"]))
                         continue
                     sequence = due
-                source.seek(sequence % current["frames"] * FRAME_BYTES)
-                payload = source.read(FRAME_BYTES)
-                if len(payload) != FRAME_BYTES:
-                    raise ValueError("converted cache truncated")
+                decode_started = time.monotonic_ns()
+                payload = source.read(sequence % current["frames"])
+                self.last_decode_us = (time.monotonic_ns()-decode_started)//1000 if source.kind == "jpeg" else 0
+                self.max_decode_us = max(self.max_decode_us, self.last_decode_us)
                 # Lock through one send prevents deletion or an old frame after a completed switch.
                 with self.lock:
                     if self.generation != generation:
@@ -140,7 +156,13 @@ class Playback:
 
     def close(self):
         self.closed.set()
-        self.stop()
+        with self.lock:
+            if self.conn:
+                try:
+                    self.conn.shutdown(socket.SHUT_RDWR)
+                except OSError:
+                    pass
+        # Preserve the chosen cache on shutdown; only the user's Stop clears it.
         if self.listener:
             self.listener.close()
         if self.thread:

@@ -1,0 +1,119 @@
+{
+  "checked_at": "2026-10-08T18:40:43+09:00",
+  "web_url": "http://192.168.0.120:16152",
+  "tcp_listener": "192.168.0.120:16151",
+  "service": {
+    "MainPID": "54902",
+    "ExecMainStartTimestamp": "Thu 2026-10-08 18:31:27 JST",
+    "ActiveState": "active",
+    "SubState": "running",
+    "FragmentPath": "/home/tane/.config/systemd/user/picow-player.service",
+    "UnitFileState": "enabled"
+  },
+  "listeners": "State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                            \nLISTEN 0      5      192.168.0.120:16152      0.0.0.0:*    users:((\"python3\",pid=54902,fd=4))\nLISTEN 0      1      192.168.0.120:16151      0.0.0.0:*    users:((\"python3\",pid=54902,fd=3))\nLISTEN 0      5      192.168.0.120:16150      0.0.0.0:*    users:((\"python\",pid=4805,fd=4))  \n",
+  "job": {
+    "id": "0b878d1267ab4abfb01c666f52f439a7",
+    "video_id": "PG_YZZmrqV4",
+    "url": "https://www.youtube.com/watch?v=PG_YZZmrqV4",
+    "fps": 6,
+    "start_input": "0:01:34",
+    "end_input": "",
+    "status": "ready",
+    "stage": "ready",
+    "progress": 100,
+    "message": "変換完了・先頭から再生します",
+    "started": 1791451984.755435,
+    "start": 94.0,
+    "end": 374.0,
+    "source_duration": 280.633333,
+    "actual_source_end": 373.633333,
+    "requested_end": 374.0,
+    "eof_rounding": true,
+    "reused": false,
+    "finished": 1791452059.6950424
+  },
+  "job_elapsed_s": 74.94,
+  "playback": {
+    "current": {
+      "key": "53d34ab84aaab59ad76b7827",
+      "video_id": "PG_YZZmrqV4",
+      "start": 94.0,
+      "end": 374.0,
+      "fps": 6,
+      "bytes": 2877215,
+      "frames": 1678,
+      "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"crop=w='min(iw,440)':h='min(ih,242)':x='(iw-ow)/2':y='max(0,min(ih-oh,(ih-220)/2))'\", \"height\": 80, \"jpeg_qscale\": 5, \"pixel_format\": \"yuvj420p\", \"scale\": \"160:80:flags=bicubic\", \"storage\": \"jpeg-zip\", \"version\": 2, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+      "created": 1791452059.6723726,
+      "title": "Gundam : Requiem For Vengeance 2024 - First Appearance of EX Gundam | 4K ULTRA",
+      "position": 103.68232835133433,
+      "loop": 1
+    },
+    "connected": true,
+    "sent": 3172,
+    "timeouts": 1,
+    "connections": 2,
+    "error": null,
+    "decode_us": 14590,
+    "decode_max_us": 34691
+  },
+  "source": {
+    "key": "194220fc0699b761fcb0b3a5",
+    "video_id": "PG_YZZmrqV4",
+    "start": 93.0,
+    "end": 373.633333,
+    "full": 0,
+    "path": "videos/PG_YZZmrqV4/sources/194220fc0699b761fcb0b3a5.mp4",
+    "bytes": 7138695,
+    "origin": 93.0,
+    "duration": 280.633333
+  },
+  "source_probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 426,
+        "height": 240,
+        "pix_fmt": "yuv420p",
+        "color_range": "tv",
+        "color_space": "bt709"
+      }
+    ],
+    "format": {
+      "duration": "280.633333"
+    }
+  },
+  "jpeg_archive": {
+    "entries": 1678,
+    "first": "frame00000001.jpg",
+    "last": "frame00001678.jpg",
+    "dimensions": {
+      "(160, 80)": 1678
+    },
+    "zip_compression": [
+      0
+    ],
+    "min_jpeg_bytes": 316,
+    "max_jpeg_bytes": 4924,
+    "archive_bytes": 2877215,
+    "raw_equivalent_bytes": 42956800
+  },
+  "pico_status_samples": [
+    "2026-10-08T18:37:47+09:00 raspi5 python3[54902]: t=8128.591 Pico STA MAC=28:cd:c1:09:78:41 received=23323 displayed=23322 dropped=2725 completed=26048 complete_rate=5.6 fps render=on display_rate=5.2 fps SPI=15597/72638 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=537976 lwip_seen=537976 pbuf_fail=0 netif_input_fail=0 tcp_gap=2595 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=2595 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1422us rx_gap_max=5036ms",
+    "2026-10-08T18:40:41+09:00 raspi5 python3[54902]: t=8301.828 Pico STA MAC=28:cd:c1:09:78:41 received=24261 displayed=24260 dropped=2788 completed=27049 complete_rate=5.6 fps render=on display_rate=4.8 fps SPI=15597/72638 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=558452 lwip_seen=558452 pbuf_fail=0 netif_input_fail=0 tcp_gap=2714 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=2714 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1422us rx_gap_max=5036ms"
+  ],
+  "service_restart_history": {
+    "initial_start_jst": "2026-10-08 17:39:54",
+    "initial_pid": 42940,
+    "jpeg_change_pid": 51549,
+    "403_change_pid": 54902,
+    "preserved_last_selection": true
+  },
+  "limits": [
+    "24h endurance not measured",
+    "physical JPEG color/gamma not yet confirmed",
+    "no Pico flash/reset/USB serial in Web phase",
+    "no network or other service change"
+  ]
+}

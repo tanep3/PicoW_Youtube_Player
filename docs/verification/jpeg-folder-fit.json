@@ -1,0 +1,151 @@
+{
+  "checked_at": "2026-10-08T19:04:41+09:00",
+  "service": "MainPID=62587\nActiveState=active\nUnitFileState=enabled\n",
+  "current": {
+    "key": "fe6d181e2e19d525192e68f7",
+    "video_id": "5cNfpnmRcfU",
+    "start": 0.0,
+    "end": 476.0,
+    "fps": 6,
+    "bytes": 6280748,
+    "frames": 2853,
+    "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"none\", \"height\": 80, \"jpeg_qscale\": 5, \"layout\": \"fit-black\", \"pixel_format\": \"yuvj420p\", \"scale\": \"scale=160:80:flags=bicubic:force_original_aspect_ratio=decrease:force_divisible_by=2:reset_sar=1,pad=160:80:(ow-iw)/2:(oh-ih)/2:color=black\", \"storage\": \"jpeg-directory\", \"version\": 3, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+    "created": 1791453787.528883,
+    "title": "Tokyo's hidden islands　小笠原諸島　Bonin Islands",
+    "position": 93.16519217600035,
+    "loop": 0
+  },
+  "job": {
+    "id": "453671d2d9aa4b579532adddfe9bc7b1",
+    "video_id": "5cNfpnmRcfU",
+    "url": "https://www.youtube.com/watch?v=5cNfpnmRcfU",
+    "fps": 6,
+    "start_input": 0.0,
+    "end_input": 476.0,
+    "status": "ready",
+    "stage": "ready",
+    "progress": 100,
+    "message": "変換完了・先頭から再生します",
+    "started": 1791453783.1621504,
+    "start": 0.0,
+    "end": 476.0,
+    "reused": false,
+    "finished": 1791453787.552455
+  },
+  "job_elapsed_s": 4.39,
+  "folder": "/home/tane/dev/PicoW/PicoW_Youtube_Player/data/videos/5cNfpnmRcfU/converted/fe6d181e2e19d525192e68f7",
+  "first": "frame00000001.jpg",
+  "last": "frame00002853.jpg",
+  "jpeg_count": 2853,
+  "jpeg_total_bytes": 6280748,
+  "dimensions": {
+    "(160, 80)": 2853
+  },
+  "source_probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 256,
+        "height": 144,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "16:9"
+      }
+    ]
+  },
+  "pico_status": [
+    "2026-10-08T19:03:02+09:00 raspi5 python3[62587]: t=9643.530 Pico STA MAC=28:cd:c1:09:78:41 received=31452 displayed=31450 dropped=3289 completed=34741 complete_rate=starting render=on display_rate=starting SPI=15597/72638 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=716070 lwip_seen=716070 pbuf_fail=0 netif_input_fail=0 tcp_gap=3574 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=3574 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1423us rx_gap_max=5036ms",
+    "2026-10-08T19:08:04+09:00 raspi5 python3[62587]: t=9945.331 Pico STA MAC=28:cd:c1:09:78:41 received=32765 displayed=32763 dropped=3363 completed=36128 complete_rate=5.8 fps render=on display_rate=5.5 fps SPI=16138/72638 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=744678 lwip_seen=744678 pbuf_fail=0 netif_input_fail=0 tcp_gap=3688 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=3688 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1423us rx_gap_max=5036ms"
+  ],
+  "playback": {
+    "current": {
+      "key": "fe6d181e2e19d525192e68f7",
+      "video_id": "5cNfpnmRcfU",
+      "start": 0.0,
+      "end": 476.0,
+      "fps": 6,
+      "bytes": 6280748,
+      "frames": 2853,
+      "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"none\", \"height\": 80, \"jpeg_qscale\": 5, \"layout\": \"fit-black\", \"pixel_format\": \"yuvj420p\", \"scale\": \"scale=160:80:flags=bicubic:force_original_aspect_ratio=decrease:force_divisible_by=2:reset_sar=1,pad=160:80:(ow-iw)/2:(oh-ih)/2:color=black\", \"storage\": \"jpeg-directory\", \"version\": 3, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+      "created": 1791453787.528883,
+      "title": "Tokyo's hidden islands　小笠原諸島　Bonin Islands",
+      "position": 93.16519217600035,
+      "loop": 0
+    },
+    "connected": true,
+    "sent": 411,
+    "timeouts": 0,
+    "connections": 1,
+    "error": null,
+    "decode_us": 16525,
+    "decode_max_us": 34568
+  },
+  "migration": {
+    "backup": "/tmp/picow_jpeg_zip_backup_058ad04604f84f559d202c1a070ab9c1",
+    "work": "/home/tane/dev/PicoW/PicoW_Youtube_Player/data/work/jpeg-folders-058ad04604f84f559d202c1a070ab9c1",
+    "items": [
+      {
+        "old": {
+          "key": "53d34ab84aaab59ad76b7827",
+          "video_id": "PG_YZZmrqV4",
+          "start": 94.0,
+          "end": 374.0,
+          "fps": 6,
+          "path": "videos/PG_YZZmrqV4/converted/53d34ab84aaab59ad76b7827.frames.zip",
+          "bytes": 2877215,
+          "frames": 1678,
+          "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"crop=w='min(iw,440)':h='min(ih,242)':x='(iw-ow)/2':y='max(0,min(ih-oh,(ih-220)/2))'\", \"height\": 80, \"jpeg_qscale\": 5, \"pixel_format\": \"yuvj420p\", \"scale\": \"160:80:flags=bicubic\", \"storage\": \"jpeg-zip\", \"version\": 2, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+          "created": 1791452059.6723726
+        },
+        "new": {
+          "key": "dd1e3950dfc98ff798c9559f",
+          "video_id": "PG_YZZmrqV4",
+          "start": 94.0,
+          "end": 374.0,
+          "fps": 6,
+          "path": "videos/PG_YZZmrqV4/converted/dd1e3950dfc98ff798c9559f",
+          "bytes": 2692613,
+          "frames": 1678,
+          "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"crop=w='min(iw,440)':h='min(ih,242)':x='(iw-ow)/2':y='max(0,min(ih-oh,(ih-220)/2))'\", \"height\": 80, \"jpeg_qscale\": 5, \"pixel_format\": \"yuvj420p\", \"scale\": \"160:80:flags=bicubic\", \"storage\": \"jpeg-directory\", \"version\": 3, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+          "created": 1791452059.6723726
+        },
+        "staged": "/home/tane/dev/PicoW/PicoW_Youtube_Player/data/work/jpeg-folders-058ad04604f84f559d202c1a070ab9c1/dd1e3950dfc98ff798c9559f",
+        "backup": "/tmp/picow_jpeg_zip_backup_058ad04604f84f559d202c1a070ab9c1/53d34ab84aaab59ad76b7827.frames.zip",
+        "archive_sha256": "d0ab8197a12f303527b4058a4762c5fad1edadc02df1eb907113cfb28898ebff",
+        "jpeg_sha256": "f963d4857665f83e51736accaa457b1d3901fcb683f2eebf6fe45921da82c332"
+      },
+      {
+        "old": {
+          "key": "18e360ad0e6fe5dbbb65a6cb",
+          "video_id": "5cNfpnmRcfU",
+          "start": 0.0,
+          "end": 476.0,
+          "fps": 6,
+          "path": "videos/5cNfpnmRcfU/converted/18e360ad0e6fe5dbbb65a6cb.frames.zip",
+          "bytes": 6756045,
+          "frames": 2853,
+          "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"crop=w='min(iw,440)':h='min(ih,242)':x='(iw-ow)/2':y='max(0,min(ih-oh,(ih-220)/2))'\", \"height\": 80, \"jpeg_qscale\": 5, \"pixel_format\": \"yuvj420p\", \"scale\": \"160:80:flags=bicubic\", \"storage\": \"jpeg-zip\", \"version\": 2, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+          "created": 1791452960.8077996
+        },
+        "new": {
+          "key": "bca9fe5caddecccdb3bac3c2",
+          "video_id": "5cNfpnmRcfU",
+          "start": 0.0,
+          "end": 476.0,
+          "fps": 6,
+          "path": "videos/5cNfpnmRcfU/converted/bca9fe5caddecccdb3bac3c2",
+          "bytes": 6442193,
+          "frames": 2853,
+          "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"crop=w='min(iw,440)':h='min(ih,242)':x='(iw-ow)/2':y='max(0,min(ih-oh,(ih-220)/2))'\", \"height\": 80, \"jpeg_qscale\": 5, \"pixel_format\": \"yuvj420p\", \"scale\": \"160:80:flags=bicubic\", \"storage\": \"jpeg-directory\", \"version\": 3, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+          "created": 1791452960.8077996
+        },
+        "staged": "/home/tane/dev/PicoW/PicoW_Youtube_Player/data/work/jpeg-folders-058ad04604f84f559d202c1a070ab9c1/bca9fe5caddecccdb3bac3c2",
+        "backup": "/tmp/picow_jpeg_zip_backup_058ad04604f84f559d202c1a070ab9c1/18e360ad0e6fe5dbbb65a6cb.frames.zip",
+        "archive_sha256": "c11ed12541e7b1e7214ddf7c7ff5392dff709d0712d091e5b81281e1c531014f",
+        "jpeg_sha256": "7bc372ad31e43013f1a102e929bd6fe4a4aaafbca70ccafcb6426de4f4808f0a"
+      }
+    ]
+  },
+  "new_download": false,
+  "physical_fit_confirmation": "pending"
+}

@@ -3,3 +3,7 @@ config.h
 __pycache__/
 .pytest_cache/
 data/
+web-config.json
+
+# Local firmware contains config.h credentials; keep comparison artifacts private.
+diagnostics/artifacts/

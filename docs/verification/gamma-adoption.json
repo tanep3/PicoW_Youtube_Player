@@ -1,0 +1,56 @@
+{
+  "current-B": {
+    "build": "/tmp/picow_adopted_gamma_current-B",
+    "gamma": "ON (default)",
+    "cyw43_diagnostic": "ON",
+    "bytes": 641536,
+    "sha256": "ee4cfe411d542618a188142c5246208e2e36af7d68cae5fe955b951567b6c1fb",
+    "warnings": 0,
+    "errors": 0,
+    "elapsed_s": 46.5,
+    "size": "text\t   data\t    bss\t    dec\t    hex\tfilename\n 320768\t      0\t 166636\t 487404\t  76fec\t/tmp/picow_adopted_gamma_current-B/pico_w_jpeg_player.elf",
+    "byte_identical_to_live_B": true
+  },
+  "normal": {
+    "build": "/tmp/picow_adopted_gamma_normal",
+    "gamma": "ON (default)",
+    "cyw43_diagnostic": "OFF",
+    "bytes": 634880,
+    "sha256": "bd10b4aa74c59612c954b0621bbd9d6a4bc5de7f813997d882cba61be49150ba",
+    "warnings": 0,
+    "errors": 0,
+    "elapsed_s": 47.74,
+    "size": "text\t   data\t    bss\t    dec\t    hex\tfilename\n 317328\t      0\t 166068\t 483396\t  76044\t/tmp/picow_adopted_gamma_normal/pico_w_jpeg_player.elf"
+  },
+  "tests": {
+    "count": 44,
+    "elapsed_s": 11.871,
+    "result": "OK",
+    "log": "docs/verification/gamma-adoption-tests.log"
+  },
+  "no_flash_or_service_restart": true,
+  "goal": {
+    "wired_required_fps": 24,
+    "wired_optional_fps": 30,
+    "production_path_wired_verification": "pending hub arrival"
+  },
+  "layout": {
+    "current": "SPI0 GP17..21, profile0",
+    "proposal": "SPI1 GP9..13, profile1, conceptual/not dimensioned",
+    "physical_dimensions": "unmeasured",
+    "BLK": "not connected, conditional 3V3 jumper unverified"
+  },
+  "runtime_unchanged": {
+    "service": "MainPID=78888\nActiveState=active\nUnitFileState=enabled\n",
+    "video_id": "5cNfpnmRcfU",
+    "fps": 6,
+    "pico_connected": true,
+    "sent": 7179
+  },
+  "source_sha256": {
+    "CMakeLists.txt": "c8b7849cfff8ea70058e57ea6b400946c05ea07a305c7f64d28fda3f253d76da",
+    "pico/lcd_gamma_lgfx.h": "b4381c43ba928279398de14fb1190a9c7a68d7734e7e5c9c0a61797cdf56bfb5",
+    "pico/pico_player.c": "827001a44132447dae6be440b0a1987d5168c814ddd24111bc0f440c9adcf384",
+    "tests/test_lcd_gamma.py": "9ee18db2a68c854dd065e0c46f9195219652e8c84326a9fd0a72b9e65cb4769f"
+  }
+}

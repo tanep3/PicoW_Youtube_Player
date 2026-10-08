@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-08T18:16:05+09:00",
+  "input": {
+    "width": 360,
+    "height": 640,
+    "codec": "h264"
+  },
+  "duration_s": 59,
+  "download_included": false,
+  "storage": "JPEG qscale 5 / ZIP_STORED",
+  "measurements": [
+    {
+      "fps": 6,
+      "frames": 353,
+      "jpeg_archive_bytes": 977378,
+      "raw_equivalent_bytes": 9036800,
+      "wall_s": 1.518,
+      "seconds_per_video_minute": 1.544,
+      "size_percent_of_raw": 10.82,
+      "decode_and_rgb565_ms_mean": 14.269,
+      "decode_and_rgb565_ms_p95": 14.75
+    },
+    {
+      "fps": 30,
+      "frames": 1767,
+      "jpeg_archive_bytes": 4891787,
+      "raw_equivalent_bytes": 45235200,
+      "wall_s": 2.276,
+      "seconds_per_video_minute": 2.314,
+      "size_percent_of_raw": 10.81,
+      "decode_and_rgb565_ms_mean": 14.261,
+      "decode_and_rgb565_ms_p95": 14.866
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 "use strict";
 const $ = id => document.getElementById(id);
-let state = null, historyKey = "", deleting = null;
+let state = null, historyKey = "", deleting = null, currentKey = null;
 const size = bytes => bytes >= 1073741824 ? (bytes/1073741824).toFixed(2)+" GiB" : (bytes/1048576).toFixed(1)+" MiB";
 const timestamp = seconds => {const m=Math.floor(seconds/60);return `${m}:${(seconds%60).toFixed(1).padStart(4,"0")}`;};
 const node = (tag,text,cls) => {const el=document.createElement(tag); if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;};
@@ -22,7 +22,7 @@ function renderHistory(items,current,job){
     body.append(node("p",`${timestamp(video.duration)} · ${size(video.bytes)}`));
     const link=node("a","元の動画を開く");link.href=video.url;link.target="_blank";link.rel="noopener noreferrer";body.append(link);
     const list=node("div",undefined,"cache-list");
-    for(const conversion of video.conversions){const b=node("button",`${conversion.fps}fps · ${timestamp(conversion.start)}–${timestamp(conversion.end)}`,"secondary cache-button");b.addEventListener("click",()=>action("play",{key:conversion.key}));b.disabled=job?.status==="working";list.append(b);}
+    for(const conversion of video.conversions){const b=node("button",`${conversion.fps}fps · ${timestamp(conversion.start)}–${timestamp(conversion.end)} · ${conversion.storage==="raw"?"旧RAW":conversion.layout==="fit-black"?"JPEG（全体）":"JPEG（旧切出し）"}`,"secondary cache-button");b.addEventListener("click",()=>action("play",{key:conversion.key}));b.disabled=job?.status==="working";list.append(b);}
     if(!video.conversions.length)list.append(node("p","完成した変換データはまだありません"));body.append(list);
     const sources=video.sources.map(s=>s.full?"全編":`部分 ${timestamp(s.start)}–${timestamp(s.end)}`).join(" / ");
     if(sources)body.append(node("p",`元動画: ${sources}`));
@@ -36,10 +36,19 @@ async function refresh(){
     $("connection").textContent=playback.connected?"Pico 接続中":"Pico 待機中";
     $("now-title").textContent=current?.title || "停止中";
     $("now-detail").textContent=current?`${current.fps} fps · ${timestamp(current.start)}–${timestamp(current.end)} · ${current.loop+1}周目（配信時刻）`:"動画を選んでください";
-    if(current && document.activeElement!==$("now-fps"))$("now-fps").value=String(current.fps);
+    if(current && current.key!==currentKey)$("now-fps").value=String(current.fps);currentKey=current?.key || null;
     $("stop").disabled=!current;$("change-fps").disabled=!current || job?.status==="working";
     const working=job?.status==="working";$("prepare").disabled=working;$("cancel").hidden=!working;$("job").hidden=!job;
-    if(job){$("job-message").textContent=job.message;$("progress").value=job.progress||0; if(working && job.stage!=="convert")$("progress").removeAttribute("value");}
+    if(job){
+      const phase={metadata:"動画情報確認",download:"取得・区間切出し",convert:"JPEG変換",ready:"準備完了"}[job.stage] || "準備";
+      const elapsed=Math.max(0,Math.floor((job.finished || Date.now()/1000)-job.started));
+      const elapsedText=`${Math.floor(elapsed/60)}分${elapsed%60}秒`;
+      const heading=job.status==="failed"?"準備に失敗しました":job.status==="cancelled"?"処理を取り消しました":phase;
+      $("job").dataset.status=job.status;
+      $("job-message").textContent=`${heading}（${elapsedText}） · ${job.message}`;
+      $("progress").value=job.progress||0;
+      if(working && job.stage!=="convert")$("progress").removeAttribute("value");
+    }
     $("usage").replaceChildren(node("div",`使用 ${size(usage.total)} / 空き ${size(usage.free)}`),node("div",`元動画 ${size(usage.source)} · 変換 ${size(usage.converted)}`));
     renderHistory(history,current,job);
   }catch(error){$("connection").textContent="サーバーとの接続を確認してください";}

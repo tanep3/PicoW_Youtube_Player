@@ -2,6 +2,9 @@
 #include <stdint.h>
 #include <string.h>
 #include "jpeg_decode.h"
+#if PLAYER_LCD_GAMMA_LGFX
+#include "lcd_gamma_lgfx.h"
+#endif
 
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
@@ -139,6 +142,12 @@ static void lcd_init(void) {
     lcd_register(0x3A, 0x05); // RGB565
     lcd_register(0x36, LCD_MADCTL);
     lcd_command(LCD_INVERT ? 0x21 : 0x20);
+#if PLAYER_LCD_GAMMA_LGFX
+    lcd_command(0xE0);
+    lcd_data(lcd_gamma_lgfx_positive, sizeof lcd_gamma_lgfx_positive);
+    lcd_command(0xE1);
+    lcd_data(lcd_gamma_lgfx_negative, sizeof lcd_gamma_lgfx_negative);
+#endif
     lcd_command(0x29);
     sleep_ms(20);
 }

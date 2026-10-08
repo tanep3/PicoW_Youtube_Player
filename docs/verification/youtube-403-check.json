@@ -1,0 +1,18 @@
+[
+  {
+    "format": "133",
+    "resolution": "426x240",
+    "protocol": "https",
+    "rc": 0,
+    "elapsed_s": 2.79,
+    "error": ""
+  },
+  {
+    "format": "229",
+    "resolution": "426x240",
+    "protocol": "m3u8_native",
+    "rc": 0,
+    "elapsed_s": 9.32,
+    "error": ""
+  }
+]

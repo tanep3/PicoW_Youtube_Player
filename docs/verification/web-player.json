@@ -1,0 +1,109 @@
+{
+  "date_jst": "2026-10-08",
+  "baseline_commit": "0fa8c38",
+  "host_tests": {
+    "count": 32,
+    "passed": true,
+    "seconds": 10.813
+  },
+  "browser": {
+    "status": "passed",
+    "browser": "Pi5 Google Chrome 154 / CDP",
+    "checks": 13,
+    "runtimeErrors": [],
+    "ports": {
+      "web": 16152,
+      "tcp": 16153
+    },
+    "screenshots": [
+      "/tmp/picow_web_desktop.png",
+      "/tmp/picow_web_mobile.png"
+    ]
+  },
+  "builds": {
+    "prod": {
+      "success": true,
+      "warnings": 0,
+      "text": 317208,
+      "bss": 166068,
+      "uf2_bytes": 634880,
+      "uf2_sha256": "9432eda69a5f5dc156e805304be1d91d3c49817bc4dcf56d0edf7d209547cec1",
+      "flashed": false
+    },
+    "diag": {
+      "success": true,
+      "warnings": 0,
+      "text": 320648,
+      "bss": 166636,
+      "uf2_bytes": 641536,
+      "uf2_sha256": "7be46fb51d43beb4c4cd095c9b309c7c16f5b0e95a4b00d8ab698b7022b81380",
+      "flashed": false
+    }
+  },
+  "tools": {
+    "yt_dlp": "/usr/local/bin/yt-dlp 2026.08.19",
+    "ffmpeg": "/usr/local/bin/ffmpeg 9.0.2, HTTPS/TLS verified",
+    "ffprobe": "/usr/local/bin/ffprobe 9.0.2, HTTPS/TLS verified",
+    "node": "/home/tane/.nvm/versions/node/v24.20.0/bin/node",
+    "old_pair": "/usr/bin/ffmpeg + ffprobe 6.1.1, HTTPS/TLS present"
+  },
+  "real_video": {
+    "id": "v2fEwXS0XeM",
+    "full_6fps_frames": 353,
+    "full_6fps_payload_bytes": 9036800,
+    "source_count": 1,
+    "verified": [
+      "metadata + thumbnail",
+      "full public download",
+      "full6fps",
+      "0..5s12fps from same source",
+      "full30fps from same source",
+      "full6fps reused"
+    ]
+  },
+  "not_done": [
+    "new Web -> physical Pico display",
+    "24-hour endurance",
+    "LAN publication / systemd deployment"
+  ],
+  "environment_changes": [],
+  "https_section_verified": {
+    "data_dir": "/tmp/picow_https_web_verify_1jt5pb73",
+    "ffmpeg": "/usr/local/bin/ffmpeg 9.0.2 HTTPS/TLS",
+    "ffprobe": "/usr/local/bin/ffprobe 9.0.2 HTTPS/TLS",
+    "status": "passed",
+    "web_api": "prepare + repeated cache playback",
+    "video_id": "v2fEwXS0XeM",
+    "requested_interval": [
+      5,
+      10
+    ],
+    "downloaded_interval": [
+      4.0,
+      11.0
+    ],
+    "source_full": false,
+    "source_origin": 4.0,
+    "probe": {
+      "duration": 7.0,
+      "start_time": 0.0,
+      "width": 360,
+      "height": 640
+    },
+    "output": {
+      "width": 160,
+      "height": 80,
+      "fps": 6,
+      "frames": 30,
+      "bytes": 768000
+    },
+    "cache_reused": true,
+    "not_marked_as_whole": true,
+    "verified_jst": "2026-10-08 17:15"
+  },
+  "host_tests_after_https": {
+    "count": 32,
+    "passed": true,
+    "seconds": 8.507
+  }
+}

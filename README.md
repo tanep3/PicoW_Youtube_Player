@@ -1,6 +1,6 @@
 # Pico W JPEG連番プレーヤー（6 fps 映像テスト）
 
-既存のJPEG連番をRaspberry Pi 5からTCPでPico Wへ送る映像テストです。RAW/JPEG比較版を同一Pico Wで実機試験済みです。音声、YouTube取得、検索UI、常駐サービスは含みません。元画像は読み取りのみです。
+既存のJPEG連番をRaspberry Pi 5からTCPでPico Wへ送る映像テストです。RAW/JPEG比較版を同一Pico Wで実機試験済みです。元画像は読み取りのみです。音声は含みません。後から追加したYouTube URL指定Webと専用userサービスは末尾の「Web URLプレーヤー」に記録しています。
 
 ## 確認した入力
 
@@ -44,19 +44,20 @@ Pico接続中はサーバーに `received`, `displayed`, `dropped`, `display_rat
 ## Pico側の設定とビルド
 
 1. 既存のローカル `config.h` を保持し、必要な場合だけWi-Fi設定、`SERVER_IP`、ポートを本人がローカル編集します。`pico/config.example.h` は新規環境向けの見本です。秘密値を表示・コミットしないでください。**転送前に `--clean-first` で再ビルド**してください。
-2. BLK仕様と実機点灯を次段階で確認します。表示位置・向き・色順は `config.h` の `LCD_X_OFFSET`, `LCD_Y_OFFSET`, `LCD_MADCTL` を調整します。BGR切替は `LCD_MADCTL` の `0x08` ビット、反転は `LCD_INVERT`。現在のブレッドボード配線は `DISPLAY_PROFILE=0`、完成形の別配線案は `DISPLAY_PROFILE=1`。本テストはBLK制御ピンを使いません。
+2. BLK内部回路は未確認です。BLK未接続の現在の配線で映像表示は確認済みです。表示位置・向き・色順は `config.h` の `LCD_X_OFFSET`, `LCD_Y_OFFSET`, `LCD_MADCTL` を調整します。BGR切替は `LCD_MADCTL` の `0x08` ビット、反転は `LCD_INVERT`。現在のブレッドボード配線は `DISPLAY_PROFILE=0`、完成形の別配線案は `DISPLAY_PROFILE=1`。本テストはBLK制御ピンを使いません。
    現在の設定は `LCD_INVERT=1`、`LCD_Y_OFFSET=24` です。26から25へ変えても上端のノイズ行と下端の白枠欠けが残ったため、もう1行上げました。固定画面で色はPi5側の `--compensate-colors` を使って確認しました。
 3. ビルド手順:
 
 ```sh
 cd /home/tane/dev/PicoW/PicoW_Youtube_Player
-PICO_SDK_PATH=/home/tane/dev/PicoW/pico-sdk cmake -S . -B build -DPICO_BOARD=pico_w
+PICO_SDK_PATH=/home/tane/pico/pico-sdk cmake -S . -B build -DPICO_BOARD=pico_w \
+  -DCMAKE_BUILD_TYPE=Release -DPLAYER_LCD_GAMMA_LGFX=ON
 cmake --build build --clean-first -j2
 ```
 
 Pico側IPv4は既定で `192.168.0.173/24`、ゲートウェイとDNSは `192.168.0.1` に固定します。これらはPi5の現行LAN設定から確認した値で、`CMakeLists.txt` の `PLAYER_STATIC_IP`, `PLAYER_GATEWAY`, `PLAYER_NETMASK`, `PLAYER_DNS` をCMakeオプションで変更できます。ルーター側のDHCP予約や他機器の設定は変更しません。Pi5側が代理ARPを返すため、Pi5からのpingだけでは `.173` に他機器がいないことを証明できません。ルーターの割当範囲・予約状況は別途確認してください。
 
-完成形候補を別ビルドする場合は `cmake -S . -B build-spi1 -DPICO_BOARD=pico_w -DDISPLAY_PROFILE=1` を使います。既存ブレッドボード用の既定値は0です。
+完成形候補のGP9〜13/SPI1配線を使う場合は、同じSDKで別buildディレクトリを指定し、`-DDISPLAY_PROFILE=1 -DPLAYER_LCD_GAMMA_LGFX=ON` を付けて再ビルド・転送が必要です。既存GP17〜21/SPI0配線の既定値は0です。[背中合わせ概念案](docs/compact-layout.md)と[現配線](docs/wiring.md)を参照してください。寸法・端子位置・BLK回路は現物確認が必要です。
 
 生成物は `build/pico_w_jpeg_player.uf2` です。PWF2比較版は同一Pico Wへ書込み済みで、Flash Verify 100% OKを確認しました。BLKを勝手にGPIOへ接続しないでください。
 
@@ -178,7 +179,7 @@ python3 -m server --host 0.0.0.0 --port 16151 --frames /home/tane/Videos/voltesV
 
 JPEG展開器はローカルLovyanGFXにあるTJpgDecのC/H 2ファイルだけを `pico/third_party/tjpgd/` へコピーし、ライセンスコメントを保持しました。出典と条件は `THIRD_PARTY_NOTICES.md` を参照してください。ホストでデコーダの全588枚展開、不正/切断JPEG、過大JPEG、159×80の寸法違いを検査しました。Pico向けクリーンビルドのBSSは166,068B、`__end__=0x20028d9c` から `__StackLimit=0x20040000` まで94,820B残ります。別に8KiBのスタック領域が予約されています。この静的見積りは実行時ヒープ使用量の証明ではありません。転送に使用したUF2は `/tmp/picow_raw_jpeg_multimode_unflashed.uf2`（634,880B、SHA256 `9432eda69a5f5dc156e805304be1d91d3c49817bc4dcf56d0edf7d209547cec1`）です。ソフト試験17件が成功しました。ホスト上の展開時間はPicoの実測値ではありません。
 
-旧LovyanGFXのST7735S初期化にはgamma設定があり、現ドライバにはありません。ただし現パネルの初期gamma値を確実に読み戻して復元する方法は確認できていないため、今回の同一ファームにはgamma切替を入れていません。通信比較では現行の色補正・`LCD_INVERT=1`・`LCD_MADCTL=0x60`・Yオフセット24を維持します。色調の比較は別の条件を混ぜずに行います。
+この通信比較時点では旧LovyanGFXのST7735S初期化にgamma設定があり、当時のドライバにはありませんでした（後述のB版で追加・採用済み）。ただし現パネルの初期gamma値を確実に読み戻して復元する方法は確認できていないため、今回の同一ファームにはgamma切替を入れていません。通信比較では現行の色補正・`LCD_INVERT=1`・`LCD_MADCTL=0x60`・Yオフセット24を維持します。色調の比較は別の条件を混ぜずに行います。
 
 ### 同一Pico WでのRAW/JPEG実機比較（2026-10-08）
 
@@ -228,3 +229,28 @@ Pi5の既存Wi-Fi `192.168.0.120` / 既定経路 / DNSを維持し、Pico宛て 
 ## プロジェクト配置
 
 Pico本体、配信本体、診断コード、証拠、文書を分離しました。[docs/PROJECT_LAYOUT.md](docs/PROJECT_LAYOUT.md) に配置・起動・ビルド・検証を記録しています。ルートの`server.py` / `diagnostic.py` / `requirements.txt`は既存コマンド用の互換入口です。秘密設定`config.h`はルートで保持しています。
+
+## Web URLプレーヤー（2026-10-08）
+
+**http://192.168.0.120:16152** で稼働中。Pi5向け `picow-player.service` はuser managerでenabled/active。Pico向けTCPもPi5 `.120:16151` で待受し、Pico `.173` の接続と描画カウント増加、動画周回を確認しました。専用サービスの実再起動でも保存した最後の選択を復元します。Pi5本体の再起動後の実測は未実施です。既存本番16150は変更していません。
+
+URL直接入力、FPS6/12/18/24/30、全編/開始終了指定、履歴、使用量、確認削除、完成後の先頭切替、1動画ループ、日本語ダークUIを実装しました。新規保存は160×80 JPEG連番を普通のフォルダへ置き、送信時にPi5でRGB565へ展開します。Web変換はcropをやめ、元動画全体を縦横比維持で縮小し、余白を黒にします。旧切出しJPEGとRAWは保全し、新規取得は240p相当を優先します。TCPへ送るのは従来のRGB565なので通信量は変わりません。
+
+旧切出し条件で測った既存59秒素材のJPEG変換は6fpsで1.518秒/977,378B、30fpsで2.276秒/4,891,787B（取得時間を含まない）。ユーザー指定動画の1:34〜最後はHTTP403対処後の再試行で取得・変換が約75秒で完了し、1,678枚/2,877,215Bを配信・周回しました。HTTPS機能不足はユーザーの更新で解消済み。403には取得形式の確認と1回限定の新URL/HLS再試行を追加しましたが、YouTube側の拒否条件は未確定です。
+
+JPEGフォルダ、縦横動画の四辺保持・黒余白を含む42テスト成功。全体表示への修正時、小笠原動画は保存済み元動画から4.390秒で再変換し、JPEG2,853枚/6,280,748Bを通常フォルダに保存して配信中。実Chromeのダーク表示と390px幅を確認済み。今回のWeb修正にPico書込み・USB操作やネットワーク設定変更は行っていません。ガンマは後述のB版でユーザーが明確な目視改善を確認しました。24時間耐久は未実施です。詳細と起動・停止・再起動は [Webプレーヤー仕様・実行方法](docs/WEB_PLAYER.md)、[設定例](web-config.example.json)、[user unit](deploy/picow-player.user.service.example)、[実測記録](docs/verification/web-service.json) を参照してください。
+
+## LCD色調の比較（B転送・通常Web復帰済み）
+
+現行転送記録に一致する復帰用UF2と、旧LovyanGFXのE0/E1ガンマ表一組だけを追加する比較版を準備しました。ガンマOFF再ビルドは現行UF2とバイト単位で一致、同じRelease/SPI0/CYW43診断構成のON版もビルド成功。44ソフト試験成功。同じ静止写真・灰色階段・RGB濃淡を既存の色補正とPWF2 RAW経路で比較する手順と実機記録は [LCDガンマ比較](docs/diagnostics/LCD_GAMMA_AB.md)。ユーザー承認後、同一Flash IDを照合してBを転送し、Flash Verify 100%と3種類の固定画像の受信/描画を確認しました。ユーザーは「いい！すごく良くなった。全然ちがうよ。」と目視改善を確認しました。Bのガンマ設定を維持します。同一写真のA基準による改善量の定量測定は未実施です。その後の依頼で比較配信だけを終了し、Bを保ったまま [通常Web](http://192.168.0.120:16152/) へ復帰しました。保存済み動画の再開とPico描画を確認済みです。
+
+
+## 採用ガンマ・完成判定・基板案
+
+通常ビルドの `PLAYER_LCD_GAMMA_LGFX` はONを既定とし、採用済みE0/E1表を `pico/lcd_gamma_lgfx.h` に配置しました。CYW43通信診断の有無に依存せず使えます。既存CMakeキャッシュがOFFなら既定値の変更だけでは上書きされないため、上の通常ビルド手順ではONを明示します。比較用Aを再現する場合だけOFFを指定します。実機のBや通常Webを再起動・再転送する必要はありません。
+
+FPS変更はPi5でキャッシュ選択/変換と送信周期を変更し、Picoは受信した完成フレームを表示します。6/12/18/24/30に固定6fpsの制限はなく、FPS変更だけなら再書込みは不要です。ハブ導入後の合格目標は本番JPEGフォルダ→Pi5復号→RAW送信の**有線24fps安定描画**、30fpsは任意確認です。この本番経路の有線24fps試験はまだ行っていません。接続先IPを変える場合は別途設定とPico再転送が必要です。
+
+[背中合わせ図](docs/compact-layout.svg)は縮尺・実物寸法未確定の概念案で、加工用/完成配線の承認図ではありません。物理1〜20番側へ信号を寄せるSPI1案、表裏反転、条件付きBLKジャンパを記録しています。採寸・端子順・アンテナ空間を確認してから作業します。現在の配線での映像・色・全画面表示は確認済み。BLK候補配線の回路/電流は未確認です。
+
+通常ガンマ採用後の44テスト成功。診断ON再ビルドのUF2は稼働Bと全バイト一致、診断OFFの通常版もビルド成功。証拠は [通常採用確認](docs/verification/gamma-adoption.json)。実機再転送・サービス再起動は行っていません。

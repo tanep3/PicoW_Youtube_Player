@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "runtime_errors": [],
+  "colors": {
+    "body": {
+      "background": "rgb(17, 25, 22)",
+      "color": "rgb(229, 238, 232)",
+      "colorScheme": "dark"
+    },
+    ".panel": {
+      "background": "rgb(27, 38, 33)",
+      "color": "rgb(229, 238, 232)",
+      "colorScheme": "dark"
+    },
+    ".card": {
+      "background": "rgb(27, 38, 33)",
+      "color": "rgb(229, 238, 232)",
+      "colorScheme": "dark"
+    },
+    "input": {
+      "background": "rgb(19, 32, 25)",
+      "color": "rgb(229, 238, 232)",
+      "colorScheme": "dark"
+    },
+    "dialog": {
+      "background": "rgb(27, 38, 33)",
+      "color": "rgb(229, 238, 232)",
+      "colorScheme": "dark"
+    }
+  },
+  "cache_labels": [
+    "6fps · 0:00.0–7:56.0 · JPEG（全体）",
+    "6fps · 0:00.0–7:56.0 · JPEG（旧切出し）",
+    "6fps · 1:34.0–6:14.0 · JPEG（旧切出し）"
+  ],
+  "mobile_no_overflow": true,
+  "checked_at": "2026-10-08T10:06:55.204Z"
+}

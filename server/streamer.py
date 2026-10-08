@@ -45,6 +45,21 @@ def compensate_inversion_and_bgr(payload: bytes) -> bytes:
     return bytes(result)
 
 
+def image_rgb565(image: Image.Image, compensate_colors: bool = False) -> bytes:
+    """Decode one image to big-endian RGB565 with optional panel compensation."""
+    if image.size != (WIDTH, HEIGHT):
+        raise ValueError("expected 160x80 image")
+    rgb = image.convert("RGB").tobytes()
+    payload = bytearray(PAYLOAD_SIZE)
+    for i in range(WIDTH * HEIGHT):
+        r, g, b = rgb[3*i:3*i+3]
+        value = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
+        payload[2*i] = value >> 8
+        payload[2*i+1] = value & 0xFF
+    frame = bytes(payload)
+    return compensate_inversion_and_bgr(frame) if compensate_colors else frame
+
+
 def load_frames(directory: Path, compensate_colors: bool = False, codec: str = "raw") -> list[bytes]:
     paths = sorted(directory.iterdir())
     expected = [f"frame{i:04d}.jpg" for i in range(1, len(paths) + 1)]
@@ -73,15 +88,7 @@ def load_frames(directory: Path, compensate_colors: bool = False, codec: str = "
             continue
         if codec != "raw":
             raise ValueError(f"unknown codec: {codec}")
-        rgb = color.tobytes()
-        payload = bytearray(PAYLOAD_SIZE)
-        for i in range(WIDTH * HEIGHT):
-            r, g, b = rgb[3*i:3*i+3]
-            value = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
-            payload[2*i] = value >> 8
-            payload[2*i+1] = value & 0xFF
-        frame = bytes(payload)
-        frames.append(compensate_inversion_and_bgr(frame) if compensate_colors else frame)
+        frames.append(image_rgb565(color, compensate_colors))
     return frames
 
 

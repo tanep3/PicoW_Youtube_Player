@@ -1,0 +1,54 @@
+test_parser_and_counter_ring (test_cyw43_diag.Cyw43DiagTests.test_parser_and_counter_ring) ... ok
+test_pws4_fragmented_status_and_event (test_cyw43_diag.Cyw43DiagTests.test_pws4_fragmented_status_and_event) ... ok
+test_color_precompensation (test_diagnostic.DiagnosticTests.test_color_precompensation) ... ok
+test_outer_rows_and_inner_rows (test_diagnostic.DiagnosticTests.test_outer_rows_and_inner_rows) ... ok
+test_solid_colors_have_rgb565_network_byte_order (test_diagnostic.DiagnosticTests.test_solid_colors_have_rgb565_network_byte_order) ... ok
+test_actual_lcd_init_adds_only_the_positive_negative_pair (test_lcd_gamma.LcdGammaTests.test_actual_lcd_init_adds_only_the_positive_negative_pair) ... ok
+test_reference_bytes_and_payload_use_the_normal_color_path (test_lcd_gamma.LcdGammaTests.test_reference_bytes_and_payload_use_the_normal_color_path) ... ok
+test_frame_selection_wraps_to_first_frame (test_server.ServerTests.test_frame_selection_wraps_to_first_frame) ... ok
+test_jpeg_modes_size_and_bounds (test_server.ServerTests.test_jpeg_modes_size_and_bounds) ... ok
+test_native_jpeg_decoder_valid_and_invalid_inputs (test_server.ServerTests.test_native_jpeg_decoder_valid_and_invalid_inputs) ... ok
+test_pm_readback_status_distinguishes_error_and_pending (test_server.ServerTests.test_pm_readback_status_distinguishes_error_and_pending) ... ok
+test_receive_only_status_counts_completed_frames_without_display_fps (test_server.ServerTests.test_receive_only_status_counts_completed_frames_without_display_fps) ... ok
+test_reconnect_uses_shared_playback_clock (test_server.ServerTests.test_reconnect_uses_shared_playback_clock) ... ok
+test_rgb565_and_frame_validation (test_server.ServerTests.test_rgb565_and_frame_validation) ... ok
+test_six_fps_pacing (test_server.ServerTests.test_six_fps_pacing) ... ok
+test_socket_packet_and_one_pass (test_server.ServerTests.test_socket_packet_and_one_pass) ... ok
+test_status_message_reports_sta_mac_and_spi_time (test_server.ServerTests.test_status_message_reports_sta_mac_and_spi_time) ... ok
+test_status_read_survives_timeout_between_fragments (test_server.ServerTests.test_status_read_survives_timeout_between_fragments) ... ok
+test_status_v2_reports_network_diagnostics_after_fragment_timeout (test_server.ServerTests.test_status_v2_reports_network_diagnostics_after_fragment_timeout) ... ok
+test_status_v3_jpeg_counters (test_server.ServerTests.test_status_v3_jpeg_counters) ... ok
+test_tcp_listener_receives_frames_and_reconnects (test_server.ServerTests.test_tcp_listener_receives_frames_and_reconnects) ... ok
+test_exact_cut_full_source_and_all_fps (test_web.TrimTests.test_exact_cut_full_source_and_all_fps) ... ok
+test_real_ytdlp_section_clock_and_partial_trim (test_web.TrimTests.test_real_ytdlp_section_clock_and_partial_trim) ... ok
+test_video_edges_preserved_and_unused_area_black (test_web.TrimTests.test_video_edges_preserved_and_unused_area_black) ... ok
+test_403_reextracts_once_with_low_resolution_hls (test_web.WebTests.test_403_reextracts_once_with_low_resolution_hls) ... ok
+test_403_retry_is_bounded_and_never_registers_incomplete_source (test_web.WebTests.test_403_retry_is_bounded_and_never_registers_incomplete_source) ... ok
+test_cache_identity_and_complete_validation (test_web.WebTests.test_cache_identity_and_complete_validation) ... ok
+test_cached_replay_fps_and_restore (test_web.WebTests.test_cached_replay_fps_and_restore) ... ok
+test_cancel_busy_delete_and_resume (test_web.WebTests.test_cancel_busy_delete_and_resume) ... ok
+test_delete_requires_stop_and_confirmation_and_one_record_only (test_web.WebTests.test_delete_requires_stop_and_confirmation_and_one_record_only) ... ok
+test_download_rejects_large_eof_shortfall_and_precise_interior_shortfall (test_web.WebTests.test_download_rejects_large_eof_shortfall_and_precise_interior_shortfall) ... ok
+test_failed_bounds_keep_current_movie (test_web.WebTests.test_failed_bounds_keep_current_movie) ... ok
+test_http_validation_history_and_csrf (test_web.WebTests.test_http_validation_history_and_csrf) ... 127.0.0.1 - - [08/Oct/2026 19:30:55] "POST /api/prepare HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 19:30:55] "POST /api/stop HTTP/1.1" 403 -
+127.0.0.1 - - [08/Oct/2026 19:30:55] "GET /../config.h HTTP/1.1" 404 -
+ok
+test_https_missing_is_clear_and_never_falls_back_to_whole (test_web.WebTests.test_https_missing_is_clear_and_never_falls_back_to_whole) ... ok
+test_jpeg_dimensions_checked_before_rgb565_send_and_raw_preserved (test_web.WebTests.test_jpeg_dimensions_checked_before_rgb565_send_and_raw_preserved) ... ok
+test_jpeg_folder_missing_or_extra_frame_is_not_reused (test_web.WebTests.test_jpeg_folder_missing_or_extra_frame_is_not_reused) ... ok
+test_jpeg_folder_usage_counts_frames_as_converted (test_web.WebTests.test_jpeg_folder_usage_counts_frames_as_converted) ... ok
+test_legacy_jpeg_archive_still_readable (test_web.WebTests.test_legacy_jpeg_archive_still_readable) ... ok
+test_loop_uses_fixed_cache_without_loading_movie (test_web.WebTests.test_loop_uses_fixed_cache_without_loading_movie) ... ok
+test_near_eof_interior_cache_never_claims_tail (test_web.WebTests.test_near_eof_interior_cache_never_claims_tail) ... ok
+test_partial_download_to_eof_accepts_metadata_rounding_and_reuses (test_web.WebTests.test_partial_download_to_eof_accepts_metadata_rounding_and_reuses) ... ok
+test_partial_source_never_covers_other_interval (test_web.WebTests.test_partial_source_never_covers_other_interval) ... ok
+test_tcp_switch_frame_zero_pacing_stop_and_reconnect (test_web.WebTests.test_tcp_switch_frame_zero_pacing_stop_and_reconnect) ... Web player Pico connected: ('127.0.0.1', 52130)
+Web player Pico connected: ('127.0.0.1', 52140)
+ok
+test_url_and_ranges (test_web.WebTests.test_url_and_ranges) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 10.963s
+
+OK

@@ -1,0 +1,129 @@
+{
+  "prepared_at": "2026-10-08T19:37:36+09:00",
+  "status": "prepared-not-flashed",
+  "baseline_matches_live_flash_record": true,
+  "baseline_direct_flash_read": false,
+  "baseline_record": "diagnostics/results/wifi-restore-result.json",
+  "exact_current_sha256": "7be46fb51d43beb4c4cd095c9b309c7c16f5b0e95a4b00d8ab698b7022b81380",
+  "variants": {
+    "A": {
+      "name": "A-gamma-off-rebuilt.uf2",
+      "bytes": 641536,
+      "sha256": "7be46fb51d43beb4c4cd095c9b309c7c16f5b0e95a4b00d8ab698b7022b81380",
+      "elf_sha256": "fd649e6b4052695e2573978a97aa4b37876b1ea20ec2bde75efd3e68438fd96c",
+      "text": 320648,
+      "data": 0,
+      "bss": 166636,
+      "build_dir": "/tmp/picow_gamma_ab_A",
+      "gamma": "OFF",
+      "warnings": []
+    },
+    "B": {
+      "name": "B-lgfx-e0e1-only.uf2",
+      "bytes": 641536,
+      "sha256": "ee4cfe411d542618a188142c5246208e2e36af7d68cae5fe955b951567b6c1fb",
+      "elf_sha256": "b366ae4d11e409e04b5bf637ba8f5bc5c048e5ce6eadbca2d7eb23a495e5f212",
+      "text": 320768,
+      "data": 0,
+      "bss": 166636,
+      "build_dir": "/tmp/picow_gamma_ab_B",
+      "gamma": "ON",
+      "warnings": []
+    }
+  },
+  "common_build": {
+    "PICO_BOARD": "pico_w",
+    "CMAKE_BUILD_TYPE": "Release",
+    "DISPLAY_PROFILE": 0,
+    "PLAYER_CYW43_DIAG": "ON",
+    "sdk_path": "/home/tane/pico/pico-sdk",
+    "sdk_commit": "9a4113fbbae65ee82d8cd6537963bc3d3b14bcca",
+    "driver_commit": "c1075d4bc440422cf2b2fd12c64a1f53f77660ee"
+  },
+  "lcd": {
+    "COLMOD": "05",
+    "MADCTL": "60",
+    "inversion": "INVON 21",
+    "spi_hz": 20000000,
+    "x_offset": 0,
+    "y_offset": 24,
+    "B_only_E0": "02 1C 07 12 37 32 29 2D 29 25 2B 39 00 01 03 10",
+    "B_only_E1": "03 1D 07 06 2E 2C 29 2D 2E 2E 37 3F 00 00 02 10"
+  },
+  "source_hashes": {
+    "CMakeLists.txt": "2349135ec05f5ac225ccfbf17b5db63c4ecc5e64cd6f07e02df8f5371465461d",
+    "pico/pico_player.c": "827001a44132447dae6be440b0a1987d5168c814ddd24111bc0f440c9adcf384",
+    "diagnostics/pico/lcd_gamma_lgfx.h": "b4381c43ba928279398de14fb1190a9c7a68d7734e7e5c9c0a61797cdf56bfb5",
+    "diagnostics/server/lcd_gamma_ab.py": "0884680f1bc6514440636b215d5f8bbc1881a57bd1fc8e432fdd6b06a6441199",
+    "tests/test_lcd_gamma.py": "ec2ec8dbad8827774652922271d34e19f8bb7e14ce1449f72c0834e7d8e64b7b"
+  },
+  "baseline_source_sha256": "29f572f34354b42cafb77c8587fe1eabd33bf0f4226b5a7a547fec0156c2b962",
+  "legacy_table_source_sha256": "6a4ed16c276a1c8db182eb5eb22942b2205ba7b42d46567a3399c2d1f0e84e69",
+  "reference_assets": {
+    "width": 160,
+    "height": 80,
+    "mode": "raw-display",
+    "fps": 6,
+    "color_compensation": "invert-and-swap-rb",
+    "references": [
+      {
+        "name": "photo_bright_0600.jpg",
+        "source": "data/videos/5cNfpnmRcfU/converted/fe6d181e2e19d525192e68f7/frame00000600.jpg",
+        "bytes": 2211,
+        "file_sha256": "cccd275a1867b485915581f40cb16f5942394f6328afde23371a019833908dec",
+        "payload_bytes": 25600,
+        "packet_bytes": 25620,
+        "payload_sha256": "62eda8825b41bb6ff63dad9ee28e500a93da32daf070f10225f272a88b0172cd"
+      },
+      {
+        "name": "photo_dark_1400.jpg",
+        "source": "data/videos/5cNfpnmRcfU/converted/fe6d181e2e19d525192e68f7/frame00001400.jpg",
+        "bytes": 756,
+        "file_sha256": "f31ba36309c4334404d1d5d312fca602a80bb65ccba2e1120fa401af82f50c23",
+        "payload_bytes": 25600,
+        "packet_bytes": 25620,
+        "payload_sha256": "a1a3ef92f4454460887dbecf328a2c770fd513b0537f9867b8b50987aaf5706a"
+      },
+      {
+        "name": "gray_rgb_reference.png",
+        "source": "/home/tane/Documents/Codex/2026-10-08/task/color-investigation/panel_ramp_reference.png",
+        "bytes": 365,
+        "file_sha256": "6280add6474ea42b5497f0b02820205cdd3920bcfd688ed0ddd46aeba794ece3",
+        "payload_bytes": 25600,
+        "packet_bytes": 25620,
+        "payload_sha256": "9b10e3c2efd11daa09d6bc458548afee7b0f0f8d5d7a30bac40352c3019b34c4"
+      }
+    ]
+  },
+  "tests": {
+    "count": 44,
+    "elapsed_seconds": 10.963,
+    "status": "passed"
+  },
+  "service_before": {
+    "service": "MainPID=62587\nActiveState=active\nUnitFileState=enabled\n",
+    "pico_status": [
+      "2026-10-08T19:24:44+09:00 raspi5 python3[62587]: t=10945.321 Pico STA MAC=28:cd:c1:09:78:41 received=3762 displayed=3761 dropped=249 completed=4011 complete_rate=6.0 fps render=on display_rate=5.8 fps SPI=15597/55383 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=82949 lwip_seen=82949 pbuf_fail=0 netif_input_fail=0 tcp_gap=402 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=402 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1418us rx_gap_max=3837ms"
+    ]
+  },
+  "service_after": {
+    "service": "MainPID=62587\nActiveState=active\nUnitFileState=enabled\n",
+    "pico_status": [
+      "2026-10-08T19:37:35+09:00 raspi5 python3[62587]: t=11716.013 Pico STA MAC=28:cd:c1:09:78:41 received=7460 displayed=7459 dropped=526 completed=7986 complete_rate=5.9 fps render=on display_rate=5.7 fps SPI=15730/61620 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=164732 lwip_seen=164732 pbuf_fail=0 netif_input_fail=0 tcp_gap=801 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=801 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1418us rx_gap_max=3837ms"
+    ]
+  },
+  "shared_sdk_status": "",
+  "shared_driver_status": "",
+  "executed": {
+    "flash": false,
+    "reset": false,
+    "usb_serial": false,
+    "stream_switch": false,
+    "service_restart": false,
+    "sdk_change": false
+  },
+  "limitations": [
+    "No physical comparison yet",
+    "Gamma causality not established"
+  ]
+}

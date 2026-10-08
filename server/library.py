@@ -11,14 +11,18 @@ import time
 import uuid
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
+from .frame_cache import cache_kind, valid_cache
 
 FPS_CHOICES = (6, 12, 18, 24, 30)
 FRAME_BYTES = 160 * 80 * 2
-# Preserve the original crop when it fits; clamp only for smaller inputs.
-CROP = "crop=w='min(iw,440)':h='min(ih,242)':x='(iw-ow)/2':y='max(0,min(ih-oh,(ih-220)/2))'"
-CONDITIONS = {"version": 1, "width": 160, "height": 80, "crop": CROP,
-              "scale": "160:80:flags=bicubic", "pixel_format": "rgb565be",
-              "color_compensation": "invert-and-swap-rb", "audio": False}
+# Fit the entire video without cropping; keep display aspect and black margins.
+FIT = ("scale=160:80:flags=bicubic:force_original_aspect_ratio=decrease:"
+       "force_divisible_by=2:reset_sar=1,pad=160:80:(ow-iw)/2:(oh-ih)/2:color=black")
+CONDITIONS = {"version": 3, "width": 160, "height": 80, "crop": "none",
+              "scale": FIT, "layout": "fit-black", "pixel_format": "yuvj420p",
+              "storage": "jpeg-directory", "jpeg_qscale": 5,
+              "wire_format": "rgb565be", "color_compensation": "invert-and-swap-rb-at-send",
+              "audio": False}
 
 class BusyError(ValueError):
     pass
@@ -75,12 +79,12 @@ def interval(start, end, duration):
         raise ValueError(f"切出範囲は 0 ≤ 開始 < 終了 ≤ {duration:g}秒 にしてください")
     return start, end
 
-def cache_key(identifier, start, end, fps):
-    material = {"video_id": identifier, "start": start, "end": end, "fps": fps, **CONDITIONS}
+def cache_key(identifier, start, end, fps, conditions=None):
+    material = {"video_id": identifier, "start": round(float(start), 3), "end": round(float(end), 3), "fps": int(fps), **(CONDITIONS if conditions is None else conditions)}
     return hashlib.sha256(json.dumps(material, sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:24]
 
 def source_key(identifier, start, end, full):
-    return hashlib.sha256(json.dumps([identifier, start, end, bool(full), "source-v1"], separators=(",", ":")).encode()).hexdigest()[:24]
+    return hashlib.sha256(json.dumps([identifier, round(float(start),3), round(float(end),3), bool(full), "source-v1"], separators=(",", ":")).encode()).hexdigest()[:24]
 
 class Library:
     def __init__(self, directory):
@@ -158,9 +162,24 @@ class Library:
 
     def find_source(self, identifier, start, end):
         with self.db() as db:
-            rows = db.execute("SELECT * FROM sources WHERE video_id=? AND start<=? AND end>=? ORDER BY bytes",
-                              (identifier, start, end)).fetchall()
-        return next((dict(r) for r in rows if self.path(r["path"]).is_file()), None)
+            rows = db.execute("""SELECT s.*, v.duration AS metadata_duration FROM sources s JOIN videos v ON v.id=s.video_id
+                WHERE s.video_id=? AND s.start<=? AND
+                (s.full=1 OR s.end>=? OR (?=v.duration AND s.end+1.0>=?))
+                ORDER BY s.bytes""", (identifier, start, end, end, end)).fetchall()
+        for row in rows:
+            item = dict(row)
+            duration = item.pop("metadata_duration")
+            # The source key records the originally requested guard endpoint.
+            # Only an EOF download can use metadata rounding; an ordinary clip
+            # ending near EOF must not be mistaken for coverage of the tail.
+            rounded_eof = (end == duration and item["end"] + 1.0 >= end and
+                           item["key"] == source_key(identifier, item["start"], duration, False))
+            if not (item["full"] or item["end"] >= end or rounded_eof):
+                continue
+            path = self.path(item["path"])
+            if path.is_file() and path.stat().st_size == item["bytes"] and item["bytes"] > 0:
+                return item
+        return None
 
     def conversion(self, key):
         with self.db() as db:
@@ -169,8 +188,9 @@ class Library:
             return None
         result = dict(row)
         p = self.path(result["path"])
-        if not p.is_file() or p.stat().st_size != result["frames"] * FRAME_BYTES or result["frames"] <= 0:
+        if not valid_cache(result, p):
             return None
+        result["storage"] = cache_kind(result)
         return result
 
     def preference(self, key, value=...):
@@ -193,6 +213,12 @@ class Library:
                     video["bytes"] += self.path(thumb).stat().st_size
                 video["thumbnail_url"] = f"/thumbnail/{video['id']}" if thumb else None
                 # Physical paths are not needed by the browser.
+                for row in video["conversions"]:
+                    try:
+                        row["storage"] = cache_kind(row)
+                        row["layout"] = json.loads(row["conditions"]).get("layout", "crop")
+                    except (ValueError, KeyError):
+                        row["storage"] = "invalid"
                 for row in video["sources"] + video["conversions"]:
                     row.pop("path", None)
         return videos
@@ -202,7 +228,9 @@ class Library:
         for p in self.root.rglob("*"):
             if not p.is_file() or p.is_symlink():
                 continue
-            group = "converted" if p.suffix == ".rgb565" else "thumbnail" if p.name == "thumbnail.jpg" else "source" if p.parent.name == "sources" else "other"
+            relative = p.relative_to(self.root).parts
+            in_converted = len(relative) >= 4 and relative[0] == "videos" and relative[2] == "converted"
+            group = "converted" if in_converted or p.suffix in (".rgb565", ".zip") else "thumbnail" if p.name == "thumbnail.jpg" else "source" if p.parent.name == "sources" else "other"
             groups[group] += p.stat().st_size
         return {**groups, "total": sum(groups.values()), "free": shutil.disk_usage(self.root).free}
 
