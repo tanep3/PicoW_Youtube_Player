@@ -1,75 +1,50 @@
 # プロジェクト配置
 
-Pico、Pi5配信、ホスト試験、診断/実験、文書を分けた。ルートのCMake起点と秘密設定は保持し、過去のCLI入口を互換ランチャーとして残している。新しいWeb/AI機能は実装していない。
+製作・起動の入口は[README](../README.md)、詳しい手順は[BUILD_AND_RUN.md](BUILD_AND_RUN.md)です。Picoの実装、Pi5配信、ケース、試験、調査記録を分けています。
 
 ```text
 PicoW_Youtube_Player/
-├── CMakeLists.txt                 # Pico本番/診断のビルド起点
-├── README.md
-├── THIRD_PARTY_NOTICES.md
-├── config.h                      # 既存秘密設定。場所/権限を保持、Git除外
-├── server.py                     # 旧CLIの互換入口
-├── diagnostic.py                 # 旧診断CLIの互換入口
-├── requirements.txt              # 旧pipコマンドの互換入口
+├── README.md / LICENSE / THIRD_PARTY_NOTICES.md
+├── CMakeLists.txt                    # Pico本番・ボタン診断のビルド
+├── config.h                         # Wi-Fi等の実設定、Git除外
+├── web-config.json                  # Pi5 Web/TCPの実設定、Git除外
 ├── pico/
-│   ├── pico_player.c
+│   ├── pico_player.c                # Wi-Fi/TCP、フレーム受信、表示
+│   ├── lcd_display.h                # SPI0、LCD窓、採用ガンマ
+│   ├── lcd_gamma_lgfx.h
+│   ├── rgb565_transform.h           # 色補正・180度回転
 │   ├── jpeg_decode.c / jpeg_decode.h
-│   ├── lwipopts.h
-│   ├── config.example.h
-│   └── third_party/tjpgd/         # ライセンスを保持したTJpgDec
+│   ├── config.example.h / lwipopts.h
+│   └── third_party/                 # TJpgDec/LovyanGFXの元ライセンス
 ├── server/
-│   ├── streamer.py                # Pi5配信本体
-│   ├── __init__.py / __main__.py   # 旧import API / python -m server
+│   ├── web.py / static/             # ダークWeb UI/API
+│   ├── media.py / library.py        # 取得・変換・履歴・容量管理
+│   ├── frame_cache.py / playback.py # JPEG1枚ずつ展開、PWF2 TCP配信
+│   ├── streamer.py                  # 既存JPEG連番のCLI比較
 │   └── requirements.txt
-├── tests/                        # 全19ホスト試験
+├── hardware/case/
+│   ├── README.md                    # 採用v3・印刷と組立
+│   └── slim-v3/
+│       ├── blender/                 # .blend、生成ソース、設計画像、原資料
+│       ├── stl/                     # 4部品＋一括配置、原資料と検査
+│       └── SOURCE_MANIFEST.json
+├── deploy/                          # user/system unitの見本
+├── tests/                           # 49件のホスト試験
 ├── diagnostics/
-│   ├── server/lcd_pattern.py      # LCD位置/色パターン
-│   ├── pico/                     # 計装C、driverコピー、patch、同梱license
-│   └── results/                  # 測定JSON・ヘッダー限定pcap
-└── docs/
-    ├── diagnostics/              # CYW43・有線/FPS検証記録
-    ├── VERIFICATION_FIX.md
-    ├── YOUTUBE_REQUIREMENTS_INVENTORY.md
-    ├── PROJECT_LAYOUT.md
-    └── wiring / compact-layout（md・svg）
+│   ├── server/                      # LCDパターン、ガンマ比較
+│   ├── pico/                        # ボタン診断、隔離CYW43計装
+│   ├── results/                     # 測定JSON・限定pcap
+│   └── artifacts/                   # 設定入りUF2/ELF保全、Git除外
+├── docs/
+│   ├── BUILD_AND_RUN.md / WEB_PLAYER.md
+│   ├── images/ / verification/
+│   ├── diagnostics/                 # 通信・LCD・ボタンの調査記録
+│   └── history/                     # 従来READMEと配置整理時点の記録
+└── data/                            # 元動画/JPEG/SQLite、一時処理、Git除外
 ```
 
-既存のPython bytecodeキャッシュは削除せず、Git除外のまま保持した。Pico本番から診断driverのコードが入るのは`PLAYER_CYW43_DIAG=ON`を明示した場合のみ。旧UF2は元の`/tmp`保存先で保持している。
+ルートの `server.py`、`diagnostic.py`、`requirements.txt` は既存CLI用の互換入口です。通常Webは `python3 -m server.web --config web-config.json`、既存JPEG連番だけの試験は `python3 -m server --frames …` を使います。
 
-## 起動と依存
+本番にはボタン操作をまだ組み込んでいません。別ターゲット `pico_w_button_test` でGP12〜15を確認します。本番の通信診断は `PLAYER_CYW43_DIAG=ON` の場合だけ隔離driverを使い、共有SDKは編集しません。LCDガンマと180度回転は通常ビルド既定ONです。
 
-```sh
-cd /home/tane/dev/PicoW/PicoW_Youtube_Player
-python3 -m pip install -r server/requirements.txt
-python3 -m server --host 192.168.0.120 --port 16151 \
-  --frames /home/tane/Videos/voltesV_6frame --compensate-colors \
-  --fps 6 --mode raw-display --send-timeout 2 --trace-motion
-```
-
-LCDパターンは`python3 -m diagnostics.server.lcd_pattern --help`。通常配信と同じポートなので、同時に起動しない。旧`python3 server.py`、`python3 diagnostic.py`、`pip install -r requirements.txt`も利用できる。旧`import server`の公開APIを保持し、新コード/テストは`from server import streamer`を使う。
-
-## Picoビルド
-
-```sh
-cmake -S . -B /tmp/picow_build -DPICO_BOARD=pico_w \
-  -DCMAKE_BUILD_TYPE=Release -DDISPLAY_PROFILE=0 -DPLAYER_LCD_GAMMA_LGFX=ON -DPLAYER_CYW43_DIAG=OFF
-cmake --build /tmp/picow_build --clean-first -j2
-```
-
-診断をビルドするときは別buildディレクトリで`PLAYER_CYW43_DIAG=ON`にする。root `config.h`はinclude pathで参照し、なければ`pico/config.example.h`へフォールバックする。設定変更後の転送前はclean-first再ビルドが必要。整理作業ではPicoへの転送を行っていない。
-
-## 検証と保全
-
-- 全ホスト試験: `python3 -B -m unittest discover -s tests -v`、19件成功。TCPループバック試験は空きポートを使い、稼働16151に介入しない。
-- 新規本番build `/tmp/picow_layout_build_prod` と診断build `/tmp/picow_layout_build_diag` 成功、compiler warning/errorなし。
-- 本番text/data/BSSは317208/0/166068B、診断は320648/0/166636B。
-- 診断UF2は移動前の`.120`復元UF2とバイト単位で一致（SHA256 `7be46fb51d43beb4c4cd095c9b309c7c16f5b0e95a4b00d8ab698b7022b81380`）。
-- 旧CLIのhelp出力は移動前と完全一致。新モジュールCLIと互換importを確認。
-- Gitリポジトリではないため、秘密`config.h`とキャッシュを除外した変更前後snapshotを`git diff --no-index`で比較する。Git初期化・gitlink・remote設定・commitは行わない。
-- 変更前snapshot `/tmp/picow_layout_before`（mode700）、移動対応表 `/tmp/picow_layout_moves.json`、manifest `/tmp/picow_layout_manifest_before.json`、差分 `/tmp/picow_layout.diff`。元configをsnapshotへコピーしていない。元パスへ戻す際はこの対応表とsnapshotを使い、ユーザーの後続変更を上書きしない。
-
-稼働中の配信はソースをメモリへ読み込み済みなので移動に再起動は不要。稼働PIDを継続照合し、ファーム再転送やサービス再起動は行わない。次回の通常起動は新CLIまたは互換入口を使用できる。
-
-NASケーブル返却未確認のため、一時有線プロファイルの後片付けは引き続き待機する。
-
-採用したLCDガンマ表は `pico/lcd_gamma_lgfx.h`。通常ビルド既定ON、通信診断オプションとは独立です。既存CMakeキャッシュがOFFの場合はONを明示してください。
+過去の配置整理・19件試験・移動前後の比較は[当時の配置記録](history/PROJECT_LAYOUT_20261007.md)へ移しました。開発途中の通信計測と配線案は[開発記録](history/DEVELOPMENT_LOG.md)に保持しています。現在の実装や採用配線は最新READMEを参照してください。

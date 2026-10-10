@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-10",
+  "sources": [
+    {
+      "library_file_id": "libfile_76d162b6c6c0819190151227abd5ddbc",
+      "version": "2",
+      "archive_name": "YouTube_LCD_Case_SLIM_v3_Blender.zip",
+      "archive_bytes": 20209560,
+      "archive_sha256": "ccfc7981548499c53ff85d236f2e2d9d95957225bab71db991f5965b281cbfa5"
+    },
+    {
+      "library_file_id": "libfile_73b84241e98081919f5d2cc9adc00b23",
+      "version": "1",
+      "archive_name": "YouTube_LCD_Case_SLIM_v3_Trial_STL.zip",
+      "archive_bytes": 2613863,
+      "archive_sha256": "15fa3d68f0196e918a888d66b6b5c71b02e4840ab2ba4a71bc8e4babb01abdcc"
+    }
+  ],
+  "extracted_file_count": 33,
+  "extracted_files_byte_identical": true,
+  "blender_header": "BLENDER-v403",
+  "blender_matches_stl_export_source": true,
+  "design_images_visually_reviewed": [
+    "01_front_3quarter.png",
+    "10_assembly_guide.png",
+    "print_layout.png"
+  ],
+  "python_syntax": "7 scripts parsed; generators not executed",
+  "json_syntax": "all package JSON parsed",
+  "stl_checks": [
+    {
+      "file": "hardware/case/slim-v3/stl/00_all_parts_A1mini.stl",
+      "bytes": 629784,
+      "sha256": "3303ef4de31ba439d949d01c9301541e713c182dfe7488b9c4df593a9a903ee9",
+      "triangles": 12594,
+      "dimensions_mm": [
+        140.0,
+        56.599998474121094,
+        24.399999618530273
+      ],
+      "closed_edges": true,
+      "opposite_edge_winding": true,
+      "signed_volume_mm3": 19674.063690167768
+    },
+    {
+      "file": "hardware/case/slim-v3/stl/01_shell.stl",
+      "bytes": 341084,
+      "sha256": "ed0536e234136d4fdf07535f936e2c701e6b8639870d7b2331a77a06bd4ca299",
+      "triangles": 6820,
+      "dimensions_mm": [
+        64.0,
+        32.69999694824219,
+        24.399999618530273
+      ],
+      "closed_edges": true,
+      "opposite_edge_winding": true,
+      "signed_volume_mm3": 13933.986464547588
+    },
+    {
+      "file": "hardware/case/slim-v3/stl/02_lid.stl",
+      "bytes": 284784,
+      "sha256": "574a7409677436b25a84df3ef7fa2b54dcf101a48266404316517ece8d37de2f",
+      "triangles": 5694,
+      "dimensions_mm": [
+        64.0,
+        32.69999694824219,
+        11.399999618530273
+      ],
+      "closed_edges": true,
+      "opposite_edge_winding": true,
+      "signed_volume_mm3": 5557.84644289176
+    },
+    {
+      "file": "hardware/case/slim-v3/stl/03_button_row_1.stl",
+      "bytes": 2084,
+      "sha256": "91dd0ba504342ebb0fa0feca792892c7a255b3e0d317c7ad0d465a3e50962bbf",
+      "triangles": 40,
+      "dimensions_mm": [
+        25.099998474121094,
+        5.600000381469727,
+        1.3999998569488525
+      ],
+      "closed_edges": true,
+      "opposite_edge_winding": true,
+      "signed_volume_mm3": 91.11681346499094
+    },
+    {
+      "file": "hardware/case/slim-v3/stl/04_button_row_2.stl",
+      "bytes": 2084,
+      "sha256": "be452585e59dde5adc60eaa7e9dfae9c1712f78c0a2014f906833ac7d6ddeb8d",
+      "triangles": 40,
+      "dimensions_mm": [
+        25.099998474121094,
+        5.599998474121094,
+        1.3999998569488525
+      ],
+      "closed_edges": true,
+      "opposite_edge_winding": true,
+      "signed_volume_mm3": 91.1168716366161
+    }
+  ],
+  "hardware_report": "User printed and assembled v3; tight button retainer accepted unchanged",
+  "not_performed": [
+    "New physical print",
+    "CAD redesign",
+    "Blender UI opening or rerender",
+    "Slicing"
+  ],
+  "readme_snapshot_sha256": "b048c7d8aa9e25dade6e0771251ec208737d22acf593a9fa4d04a95d4d0b764e",
+  "history_preserved": "Historical prose unchanged; relative Markdown links rebased"
+}

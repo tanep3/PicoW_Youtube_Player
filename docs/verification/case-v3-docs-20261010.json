@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-10",
+  "case_file_hashes_checked": 33,
+  "case_images": [
+    {
+      "path": "hardware/case/slim-v3/blender/01_front_3quarter.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/02_front_orthographic.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/03_back_3quarter.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/04_cutaway.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/05_exploded.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/06_rear_open.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/07_lid_snap_detail.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/08_integral_tabs_and_hole_seats.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/09_LCD_corner_snap_detail.png",
+      "size": [
+        1600,
+        1100
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/blender/10_assembly_guide.png",
+      "size": [
+        2700,
+        1908
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/stl/10_assembly_guide.png",
+      "size": [
+        2700,
+        1908
+      ]
+    },
+    {
+      "path": "hardware/case/slim-v3/stl/print_layout.png",
+      "size": [
+        1600,
+        1000
+      ]
+    }
+  ],
+  "markdown_files_checked": 20,
+  "local_file_links_checked": 128,
+  "broken_links": [],
+  "unresolved_anchors": [],
+  "history_text_preserved": true,
+  "third_party_source_and_licenses_unchanged": true,
+  "mit_copyright": "2026 Tane Channel Technology",
+  "ignored_private_paths_checked": [
+    "config.h",
+    "web-config.json",
+    "data/",
+    "diagnostics/artifacts/",
+    "build/"
+  ],
+  "tests": {
+    "count": 49,
+    "seconds": 14.203,
+    "result": "OK",
+    "log": "case-v3-docs-20261010-tests.log"
+  },
+  "operations_not_performed": [
+    "Pico transfer/reset/USB serial",
+    "Service changes/restart",
+    "OS/network/shared SDK changes",
+    "git push"
+  ],
+  "whitespace_check": {
+    "authored_documentation": "pass",
+    "unchanged_upstream_lines": [
+      "hardware/case/slim-v3/blender/build_youtube_case_v3.py:293",
+      "hardware/case/slim-v3/stl/validate_stls.py:58"
+    ],
+    "reason": "Two trailing-space lines already exist in the selected original packages; source files retained byte-identical"
+  }
+}

@@ -1,0 +1,293 @@
+{
+  "status": "V3_TRIAL_PRINT_NOT_PHYSICALLY_VALIDATED",
+  "coordinate_system": "+X right,+Y down in front view,+Z rearward",
+  "internal_depth_mm": 22.0,
+  "outer_nominal_mm": [
+    64,
+    32,
+    26.8
+  ],
+  "outer_max_wave_mm": [
+    64,
+    32.7,
+    26.8
+  ],
+  "measured_LCD": {
+    "board": [
+      30,
+      24.02,
+      3.2
+    ],
+    "origin": [
+      4,
+      4.1,
+      0
+    ],
+    "window": [
+      23,
+      13.8
+    ],
+    "window_offset": [
+      0.9,
+      5.3
+    ],
+    "FPC_protrusion_right": 1
+  },
+  "LCD_tabs": [
+    {
+      "center_X": 6.1,
+      "edge": "TOP",
+      "beam_thickness": 0.7,
+      "beam_width": 2.0,
+      "root_Z": -1.2,
+      "shoulder_Z": 3.35,
+      "retention_overlap": 0.25,
+      "required_deflection": 0.3
+    },
+    {
+      "center_X": 6.1,
+      "edge": "BOTTOM",
+      "beam_thickness": 0.7,
+      "beam_width": 2.0,
+      "root_Z": -1.2,
+      "shoulder_Z": 3.35,
+      "retention_overlap": 0.25,
+      "required_deflection": 0.3
+    },
+    {
+      "center_X": 32.0,
+      "edge": "TOP",
+      "beam_thickness": 0.7,
+      "beam_width": 2.0,
+      "root_Z": -1.2,
+      "shoulder_Z": 3.35,
+      "retention_overlap": 0.25,
+      "required_deflection": 0.3
+    },
+    {
+      "center_X": 32.0,
+      "edge": "BOTTOM",
+      "beam_thickness": 0.7,
+      "beam_width": 2.0,
+      "root_Z": -1.2,
+      "shoulder_Z": 3.35,
+      "retention_overlap": 0.25,
+      "required_deflection": 0.3
+    }
+  ],
+  "Pico": {
+    "official_source": "https://datasheets.raspberrypi.com/picow/pico-w-datasheet.pdf",
+    "board": [
+      51,
+      21,
+      1
+    ],
+    "origin": [
+      5,
+      2.8,
+      16.8
+    ],
+    "hole_centers": [
+      [
+        7.0,
+        7.6
+      ],
+      [
+        7.0,
+        19.0
+      ],
+      [
+        54.0,
+        7.6
+      ],
+      [
+        54.0,
+        19.0
+      ]
+    ],
+    "hole_diameter_nominal": 2.1,
+    "hole_diameter_tolerance": 0.05,
+    "pin_diameters": [
+      1.65,
+      1.3,
+      1.3,
+      1.65
+    ],
+    "shoulder_diameter": 3.2,
+    "lid_boss_outer_diameter": 3.2,
+    "case_left_pin_clearance_diameter": 2.3,
+    "lid_stop_clearance_Z": 0.12,
+    "socket_envelope_ASSUMED": [
+      49.26,
+      2.6,
+      8.3
+    ],
+    "socket_row_centers_Y": [
+      4.41,
+      22.19
+    ]
+  },
+  "fit_mm": {
+    "socket_to_button_rail": 2.25,
+    "shield_to_lid": 1.0,
+    "lid_ring_side_clearance": 0.15,
+    "lid_catch_wall_engagement": 0.4,
+    "lid_catch_axial_play": 0.12,
+    "LCD_catch_overlap": 0.25,
+    "LCD_catch_axial_play": 0.15,
+    "LCD_tab_side_travel": 0.3
+  },
+  "elastic_estimates": {
+    "formula": "nominal small-deflection cantilever root strain=1.5*t*delta/L^2; not FEA or print validation",
+    "LCD_percent": 1.521555367709214,
+    "lid_percent": 1.2781065088757397
+  },
+  "intersection_volumes_mm3": {
+    "closed_shell_vs_lid": 0.0,
+    "shell_vs_LCD_PCB": 0.0,
+    "shell_vs_LCD_header": 0.0,
+    "shell_vs_FPC": 0.0,
+    "shell_vs_Pico_PCB": 0.0,
+    "shell_vs_USB": 0.0,
+    "shell_vs_shield": 0.0,
+    "lid_vs_Pico_PCB": 0.0,
+    "lid_vs_shield": 0.0,
+    "lid_vs_USB": 0.0,
+    "lid_vs_LCD_header": 0.0,
+    "shell_vs_Pico 20 pin socket ASSUMED": 0.0,
+    "shell_vs_Pico 20 pin socket ASSUMED.001": 0.0,
+    "shell_vs_PRINT_Button_Row_1_Slide_X_Positive": 0.0,
+    "shell_vs_PRINT_Button_Row_2_Slide_X_Positive": 0.0,
+    "shell_vs_REF_Switch_1_Body_ASSUMED_6x6x4p2": 0.0,
+    "shell_vs_REF_Switch_2_Body_ASSUMED_6x6x4p2": 0.0,
+    "shell_vs_REF_Switch_3_Body_ASSUMED_6x6x4p2": 0.0,
+    "shell_vs_REF_Switch_4_Body_ASSUMED_6x6x4p2": 0.0,
+    "lid_vs_Pico 20 pin socket ASSUMED": 0.0,
+    "lid_vs_Pico 20 pin socket ASSUMED.001": 0.0,
+    "LCD_header_vs_Pico 20 pin socket ASSUMED": 0.0,
+    "LCD_header_vs_Pico 20 pin socket ASSUMED.001": 0.0,
+    "PRINT_Button_Row_1_Slide_X_Positive_vs_Pico 20 pin socket ASSUMED": 0.0,
+    "PRINT_Button_Row_1_Slide_X_Positive_vs_Pico 20 pin socket ASSUMED.001": 0.0,
+    "PRINT_Button_Row_2_Slide_X_Positive_vs_Pico 20 pin socket ASSUMED": 0.0,
+    "PRINT_Button_Row_2_Slide_X_Positive_vs_Pico 20 pin socket ASSUMED.001": 0.0
+  },
+  "print_candidates": {
+    "PRINT_Shell_64x32_InternalDepth22": {
+      "vertices": 3382,
+      "faces": 6820,
+      "nonmanifold_edges": 0,
+      "boundary_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 13933.989412003582,
+      "bounds_mm": [
+        [
+          0.0,
+          -0.3499999940395355,
+          -2.4000000953674316
+        ],
+        [
+          64.0,
+          32.349998474121094,
+          22.0
+        ]
+      ]
+    },
+    "PRINT_Lid_Flexure_Snaps_No_Wiring": {
+      "vertices": 2849,
+      "faces": 5690,
+      "nonmanifold_edges": 0,
+      "boundary_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 5557.84654886133,
+      "bounds_mm": [
+        [
+          0.0,
+          -0.3499999940395355,
+          13.0
+        ],
+        [
+          64.0,
+          32.349998474121094,
+          24.399999618530273
+        ]
+      ]
+    },
+    "PRINT_Button_Row_1_Slide_X_Positive": {
+      "vertices": 22,
+      "faces": 40,
+      "nonmanifold_edges": 0,
+      "boundary_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 91.11681346499093,
+      "bounds_mm": [
+        [
+          35.70000076293945,
+          7.199999809265137,
+          3.700000047683716
+        ],
+        [
+          60.79999923706055,
+          12.800000190734863,
+          5.099999904632568
+        ]
+      ]
+    },
+    "PRINT_Button_Row_2_Slide_X_Positive": {
+      "vertices": 22,
+      "faces": 40,
+      "nonmanifold_edges": 0,
+      "boundary_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 91.11687163661615,
+      "bounds_mm": [
+        [
+          35.70000076293945,
+          19.200000762939453,
+          3.700000047683716
+        ],
+        [
+          60.79999923706055,
+          24.799999237060547,
+          5.099999904632568
+        ]
+      ]
+    }
+  },
+  "limitations": [
+    "Real LCD corner contact edges and glass assembly require visual hardware verification",
+    "Socket body/solder/USB/switch envelopes remain assumed; wired assembly not proven",
+    "Printed flexure forces, fatigue and dimensional fit require trial print; PETG preferred for spring trial",
+    "No assertion of RF performance; localized hole supports minimize but do not eliminate antenna dielectric impact"
+  ],
+  "buttons": {
+    "count": 4,
+    "centers_XY": [
+      [
+        43,
+        10
+      ],
+      [
+        56,
+        10
+      ],
+      [
+        43,
+        22
+      ],
+      [
+        56,
+        22
+      ]
+    ],
+    "pocket_mm": 6.2,
+    "stem_hole_diameter_mm": 4.0,
+    "seat_depth_from_front_exterior_mm": 1.6,
+    "retainer_thickness_mm": 1.4,
+    "retainer_switch_gap_mm": 0.3,
+    "unchanged_from_v2": true
+  },
+  "source_numeric_cleanup": {
+    "max_coordinate_rounding_mm": 5e-05,
+    "mesh_cleanup": "quantize coordinates0.0001mm then remove degenerate triangles before base-mesh validation and STL export"
+  }
+}

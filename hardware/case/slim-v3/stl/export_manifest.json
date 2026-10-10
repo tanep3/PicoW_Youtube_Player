@@ -1,0 +1,406 @@
+{
+  "source_blend": "YouTube_LCD_Case_SLIM_Fit_v3.blend",
+  "source_blend_sha256": "cc6ec8ac135e45ba53b49f12b13da98d5f73e65280358cd0251e1ea3cde5da1f",
+  "scene": "01_ASSEMBLED_DRAFT_mm",
+  "source_blender_unit_scale": 0.0010000000474974513,
+  "coordinate_convention": "1 stored Blender coordinate unit = 1 mm; no scene-unit factor applied",
+  "geometry": "Validated trial base meshes; visual-only bevel and weighted-normal modifiers excluded",
+  "geometry_changes": "None; triangulation and rigid print-orientation/placement transforms only",
+  "scale_percent": 100,
+  "parts": [
+    {
+      "file": "01_shell.stl",
+      "source_object": "PRINT_Shell_64x32_InternalDepth22",
+      "print_orientation": "Front exterior on bed; open rear faces up",
+      "rotation_about_x_degrees": 0,
+      "source_to_individual_stl_matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.3499999940395355
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          2.4000000953674316
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "individual_to_plate_translation_mm": [
+        20,
+        10,
+        0
+      ],
+      "base_mesh": {
+        "vertices": 3382,
+        "faces": 6820,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 13933.989412003582,
+        "bounds_mm": [
+          [
+            0.0,
+            -0.3499999940395355,
+            -2.4000000953674316
+          ],
+          [
+            64.0,
+            32.349998474121094,
+            22.0
+          ]
+        ]
+      },
+      "evaluated_visual_modifiers_mesh": {
+        "vertices": 12298,
+        "faces": 15736,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 13933.989453658342,
+        "bounds_mm": [
+          [
+            0.0,
+            -0.3499999940395355,
+            -2.4000000953674316
+          ],
+          [
+            64.0,
+            32.349998474121094,
+            22.0
+          ]
+        ]
+      },
+      "excluded_modifiers": [
+        {
+          "name": "Small edge highlights (non-destructive)",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width_mm": 0.07000000029802322,
+          "segments": 2,
+          "limit_method": "ANGLE",
+          "angle_limit": 0.550000011920929
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true
+        }
+      ],
+      "triangle_count": 6820,
+      "sha256": "ed0536e234136d4fdf07535f936e2c701e6b8639870d7b2331a77a06bd4ca299"
+    },
+    {
+      "file": "02_lid.stl",
+      "source_object": "PRINT_Lid_Flexure_Snaps_No_Wiring",
+      "print_orientation": "Flat rear exterior on bed; locating ring and tongues face up",
+      "rotation_about_x_degrees": 180,
+      "source_to_individual_stl_matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          32.349998474121094
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          24.399999618530273
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "individual_to_plate_translation_mm": [
+        96,
+        10,
+        0
+      ],
+      "base_mesh": {
+        "vertices": 2849,
+        "faces": 5690,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 5557.84654886133,
+        "bounds_mm": [
+          [
+            0.0,
+            -0.3499999940395355,
+            13.0
+          ],
+          [
+            64.0,
+            32.349998474121094,
+            24.399999618530273
+          ]
+        ]
+      },
+      "evaluated_visual_modifiers_mesh": {
+        "vertices": 8491,
+        "faces": 11332,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 5557.8451734952305,
+        "bounds_mm": [
+          [
+            0.0,
+            -0.3499999940395355,
+            13.0
+          ],
+          [
+            64.0,
+            32.349998474121094,
+            24.399999618530273
+          ]
+        ]
+      },
+      "excluded_modifiers": [
+        {
+          "name": "Small edge highlights (non-destructive)",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width_mm": 0.07000000029802322,
+          "segments": 2,
+          "limit_method": "ANGLE",
+          "angle_limit": 0.550000011920929
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true
+        }
+      ],
+      "triangle_count": 5694,
+      "sha256": "574a7409677436b25a84df3ef7fa2b54dcf101a48266404316517ece8d37de2f"
+    },
+    {
+      "file": "03_button_row_1.stl",
+      "source_object": "PRINT_Button_Row_1_Slide_X_Positive",
+      "print_orientation": "Broad flat face on bed",
+      "rotation_about_x_degrees": 0,
+      "source_to_individual_stl_matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -35.70000076293945
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -7.199999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -3.700000047683716
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "individual_to_plate_translation_mm": [
+        44,
+        61,
+        0
+      ],
+      "base_mesh": {
+        "vertices": 22,
+        "faces": 40,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 91.11681346499093,
+        "bounds_mm": [
+          [
+            35.70000076293945,
+            7.199999809265137,
+            3.700000047683716
+          ],
+          [
+            60.79999923706055,
+            12.800000190734863,
+            5.099999904632568
+          ]
+        ]
+      },
+      "evaluated_visual_modifiers_mesh": {
+        "vertices": 122,
+        "faces": 140,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 90.97477326861147,
+        "bounds_mm": [
+          [
+            35.70000076293945,
+            7.199999809265137,
+            3.700000047683716
+          ],
+          [
+            60.79999923706055,
+            12.800000190734863,
+            5.099999904632568
+          ]
+        ]
+      },
+      "excluded_modifiers": [
+        {
+          "name": "Small edge highlights (non-destructive)",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width_mm": 0.07000000029802322,
+          "segments": 2,
+          "limit_method": "ANGLE",
+          "angle_limit": 0.550000011920929
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true
+        }
+      ],
+      "triangle_count": 40,
+      "sha256": "91dd0ba504342ebb0fa0feca792892c7a255b3e0d317c7ad0d465a3e50962bbf"
+    },
+    {
+      "file": "04_button_row_2.stl",
+      "source_object": "PRINT_Button_Row_2_Slide_X_Positive",
+      "print_orientation": "Broad flat face on bed",
+      "rotation_about_x_degrees": 0,
+      "source_to_individual_stl_matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -35.70000076293945
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -19.200000762939453
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -3.700000047683716
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "individual_to_plate_translation_mm": [
+        81,
+        61,
+        0
+      ],
+      "base_mesh": {
+        "vertices": 22,
+        "faces": 40,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 91.11687163661615,
+        "bounds_mm": [
+          [
+            35.70000076293945,
+            19.200000762939453,
+            3.700000047683716
+          ],
+          [
+            60.79999923706055,
+            24.799999237060547,
+            5.099999904632568
+          ]
+        ]
+      },
+      "evaluated_visual_modifiers_mesh": {
+        "vertices": 122,
+        "faces": 140,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "signed_volume_mm3": 90.9748295132674,
+        "bounds_mm": [
+          [
+            35.70000076293945,
+            19.200000762939453,
+            3.700000047683716
+          ],
+          [
+            60.79999923706055,
+            24.799999237060547,
+            5.099999904632568
+          ]
+        ]
+      },
+      "excluded_modifiers": [
+        {
+          "name": "Small edge highlights (non-destructive)",
+          "type": "BEVEL",
+          "show_viewport": true,
+          "show_render": true,
+          "width_mm": 0.07000000029802322,
+          "segments": 2,
+          "limit_method": "ANGLE",
+          "angle_limit": 0.550000011920929
+        },
+        {
+          "name": "Weighted normals",
+          "type": "WEIGHTED_NORMAL",
+          "show_viewport": true,
+          "show_render": true
+        }
+      ],
+      "triangle_count": 40,
+      "sha256": "be452585e59dde5adc60eaa7e9dfae9c1712f78c0a2014f906833ac7d6ddeb8d"
+    }
+  ],
+  "arranged_plate": {
+    "file": "00_all_parts_A1mini.stl",
+    "build_volume_mm": [
+      180,
+      180,
+      180
+    ],
+    "part_count": 4,
+    "triangle_count": 12594,
+    "sha256": "3303ef4de31ba439d949d01c9301541e713c182dfe7488b9c4df593a9a903ee9",
+    "supports_included": false,
+    "brims_included": false
+  },
+  "source_unchanged_sha256_verified": true
+}

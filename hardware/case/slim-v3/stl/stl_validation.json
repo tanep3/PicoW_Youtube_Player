@@ -1,0 +1,614 @@
+{
+  "status": "STL_GEOMETRY_CHECKS_PASS_TRIAL_PRINT_ONLY",
+  "units": "mm coordinates; STL itself contains no standardized unit metadata",
+  "scale_percent": 100,
+  "source_geometry_preserved": true,
+  "actual_stl_checks": "Parsed final binary files, exact vertex welding, all edges incident to two oppositely wound faces; positive volumes and stored outward normals; no repair performed",
+  "checks_not_performed": [
+    "Bambu Studio slicing or support simulation",
+    "Physical print, fit, insertion force, fatigue, switch travel or electronic assembly test",
+    "Exhaustive triangle self-intersection test"
+  ],
+  "combined_triangle_coordinate_max_error_mm": 7.62939453125e-06,
+  "plate_part_count": 4,
+  "plate_min_part_bbox_gap_mm": 11.900001525878906,
+  "plate_fits_180_mm": true,
+  "files": {
+    "00_all_parts_A1mini.stl": {
+      "sha256": "3303ef4de31ba439d949d01c9301541e713c182dfe7488b9c4df593a9a903ee9",
+      "triangles": 12594,
+      "vertices_exact_weld": 6275,
+      "nonmanifold_vertices": 0,
+      "bounds_mm": [
+        [
+          20.0,
+          10.0,
+          0.0
+        ],
+        [
+          160.0,
+          66.5999984741211,
+          24.399999618530273
+        ]
+      ],
+      "dimensions_mm": [
+        140.0,
+        56.599998474121094,
+        24.399999618530273
+      ],
+      "min_Z_mm": 0.0,
+      "max_Z_mm": 24.399999618530273,
+      "connected_components": 4,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "degenerate_triangles": 0,
+      "min_triangle_area_mm2": 2.4650129668726836e-06,
+      "duplicate_triangles": 0,
+      "stored_normal_mismatch_count": 0,
+      "signed_component_volumes_mm3": [
+        13933.982500056003,
+        5557.847450705839,
+        91.11686970302223,
+        91.11686970302223
+      ],
+      "total_volume_mm3": 19674.063690167888,
+      "finite_coordinates": true,
+      "downward_facing_non_bed_area_mm2": 154.67886234770322,
+      "downward_face_groups_by_print_Z_mm": {
+        "5.75": {
+          "area_mm2": 4.399997711181641,
+          "xy_min": [
+            25.100000381469727,
+            14.149999618530273
+          ],
+          "xy_max": [
+            53.0,
+            38.77000045776367
+          ],
+          "triangle_count": 8
+        },
+        "5.3": {
+          "area_mm2": 30.740023765567457,
+          "xy_min": [
+            57.599998474121094,
+            18.900001525878906
+          ],
+          "xy_max": [
+            71.5,
+            33.80000305175781
+          ],
+          "triangle_count": 8
+        },
+        "7.75": {
+          "area_mm2": 44.95003099441965,
+          "xy_min": [
+            57.599998474121094,
+            18.900001525878906
+          ],
+          "xy_max": [
+            81.0,
+            33.80000305175781
+          ],
+          "triangle_count": 12
+        },
+        "17.88": {
+          "area_mm2": 0.07776392176469442,
+          "xy_min": [
+            28.545499801635742,
+            17.100000381469727
+          ],
+          "xy_max": [
+            28.600000381469727,
+            30.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "17.867": {
+          "area_mm2": 0.0021119367850327125,
+          "xy_min": [
+            28.544200897216797,
+            17.100000381469727
+          ],
+          "xy_max": [
+            28.600000381469727,
+            30.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "17.85": {
+          "area_mm2": 5.7698291792239615,
+          "xy_min": [
+            25.64780044555664,
+            16.350000381469727
+          ],
+          "xy_max": [
+            28.600000381469727,
+            30.950000762939453
+          ],
+          "triangle_count": 70
+        },
+        "17.8": {
+          "area_mm2": 3.7599946403497597,
+          "xy_min": [
+            24.450000762939453,
+            12.550000190734863
+          ],
+          "xy_max": [
+            72.0,
+            30.600000381469727
+          ],
+          "triangle_count": 12
+        },
+        "17.52": {
+          "area_mm2": 22.89846616910836,
+          "xy_min": [
+            20.0,
+            12.800000190734863
+          ],
+          "xy_max": [
+            84.0,
+            38.80000305175781
+          ],
+          "triangle_count": 36
+        },
+        "17.896": {
+          "area_mm2": 0.03129839835884343,
+          "xy_min": [
+            28.586299896240234,
+            17.100000381469727
+          ],
+          "xy_max": [
+            28.600000381469727,
+            30.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "15.973": {
+          "area_mm2": 7.422753373000821,
+          "xy_min": [
+            22.200000762939453,
+            17.100000381469727
+          ],
+          "xy_max": [
+            28.600000381469727,
+            30.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "14.062": {
+          "area_mm2": 14.477577828926837,
+          "xy_min": [
+            22.200000762939453,
+            17.100000381469727
+          ],
+          "xy_max": [
+            28.544200897216797,
+            30.200000762939453
+          ],
+          "triangle_count": 2
+        },
+        "15.956": {
+          "area_mm2": 7.119558248491497,
+          "xy_min": [
+            22.200000762939453,
+            17.100000381469727
+          ],
+          "xy_max": [
+            28.544200897216797,
+            29.76799964904785
+          ],
+          "triangle_count": 2
+        },
+        "9.4": {
+          "area_mm2": 8.839918479905464,
+          "xy_min": [
+            97.80000305175781,
+            14.249998092651367
+          ],
+          "xy_max": [
+            158.1999969482422,
+            39.54999923706055
+          ],
+          "triangle_count": 8
+        },
+        "0.282": {
+          "area_mm2": 2.094768850309586,
+          "xy_min": [
+            68.33619689941406,
+            62.599998474121094
+          ],
+          "xy_max": [
+            106.0999984741211,
+            65.0
+          ],
+          "triangle_count": 2
+        },
+        "0.141": {
+          "area_mm2": 2.094768850309586,
+          "xy_min": [
+            68.33619689941406,
+            62.599998474121094
+          ],
+          "xy_max": [
+            106.0999984741211,
+            65.0
+          ],
+          "triangle_count": 2
+        }
+      }
+    },
+    "01_shell.stl": {
+      "sha256": "ed0536e234136d4fdf07535f936e2c701e6b8639870d7b2331a77a06bd4ca299",
+      "triangles": 6820,
+      "vertices_exact_weld": 3382,
+      "nonmanifold_vertices": 0,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          64.0,
+          32.69999694824219,
+          24.399999618530273
+        ]
+      ],
+      "dimensions_mm": [
+        64.0,
+        32.69999694824219,
+        24.399999618530273
+      ],
+      "min_Z_mm": 0.0,
+      "max_Z_mm": 24.399999618530273,
+      "connected_components": 1,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "degenerate_triangles": 0,
+      "min_triangle_area_mm2": 2.4651938520610023e-06,
+      "duplicate_triangles": 0,
+      "stored_normal_mismatch_count": 0,
+      "signed_component_volumes_mm3": [
+        13933.986464547646
+      ],
+      "total_volume_mm3": 13933.986464547646,
+      "finite_coordinates": true,
+      "downward_facing_non_bed_area_mm2": 141.64945160862052,
+      "downward_face_groups_by_print_Z_mm": {
+        "5.75": {
+          "area_mm2": 4.399995803833008,
+          "xy_min": [
+            5.099999904632568,
+            4.150000095367432
+          ],
+          "xy_max": [
+            33.0,
+            28.770000457763672
+          ],
+          "triangle_count": 8
+        },
+        "5.3": {
+          "area_mm2": 30.740023765567457,
+          "xy_min": [
+            37.599998474121094,
+            8.90000057220459
+          ],
+          "xy_max": [
+            51.5,
+            23.80000114440918
+          ],
+          "triangle_count": 8
+        },
+        "7.75": {
+          "area_mm2": 44.95003099441965,
+          "xy_min": [
+            37.599998474121094,
+            8.90000057220459
+          ],
+          "xy_max": [
+            61.0,
+            23.80000114440918
+          ],
+          "triangle_count": 12
+        },
+        "17.88": {
+          "area_mm2": 0.07776396958368667,
+          "xy_min": [
+            8.545499801635742,
+            7.099999904632568
+          ],
+          "xy_max": [
+            8.600000381469727,
+            20.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "17.867": {
+          "area_mm2": 0.002112569336242735,
+          "xy_min": [
+            8.54419994354248,
+            7.099999904632568
+          ],
+          "xy_max": [
+            8.600000381469727,
+            20.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "17.85": {
+          "area_mm2": 5.769827680911021,
+          "xy_min": [
+            5.647799968719482,
+            6.349999904632568
+          ],
+          "xy_max": [
+            8.600000381469727,
+            20.950000762939453
+          ],
+          "triangle_count": 70
+        },
+        "17.8": {
+          "area_mm2": 3.7599994325637454,
+          "xy_min": [
+            4.449999809265137,
+            2.549999952316284
+          ],
+          "xy_max": [
+            52.0,
+            20.600000381469727
+          ],
+          "triangle_count": 12
+        },
+        "17.52": {
+          "area_mm2": 22.89849726705833,
+          "xy_min": [
+            0.0,
+            2.799999952316284
+          ],
+          "xy_max": [
+            64.0,
+            28.80000114440918
+          ],
+          "triangle_count": 36
+        },
+        "17.896": {
+          "area_mm2": 0.031298411527291375,
+          "xy_min": [
+            8.586299896240234,
+            7.099999904632568
+          ],
+          "xy_max": [
+            8.600000381469727,
+            20.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "15.973": {
+          "area_mm2": 7.422762025971618,
+          "xy_min": [
+            2.200000047683716,
+            7.099999904632568
+          ],
+          "xy_max": [
+            8.600000381469727,
+            20.200000762939453
+          ],
+          "triangle_count": 4
+        },
+        "14.062": {
+          "area_mm2": 14.477583618265504,
+          "xy_min": [
+            2.200000047683716,
+            7.099999904632568
+          ],
+          "xy_max": [
+            8.54419994354248,
+            20.200000762939453
+          ],
+          "triangle_count": 2
+        },
+        "15.956": {
+          "area_mm2": 7.119556069582973,
+          "xy_min": [
+            2.200000047683716,
+            7.099999904632568
+          ],
+          "xy_max": [
+            8.54419994354248,
+            19.76799964904785
+          ],
+          "triangle_count": 2
+        }
+      },
+      "relative_volume_change_from_base": 2.1152993940633608e-07
+    },
+    "02_lid.stl": {
+      "sha256": "574a7409677436b25a84df3ef7fa2b54dcf101a48266404316517ece8d37de2f",
+      "triangles": 5694,
+      "vertices_exact_weld": 2849,
+      "nonmanifold_vertices": 0,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          64.0,
+          32.69999694824219,
+          11.399999618530273
+        ]
+      ],
+      "dimensions_mm": [
+        64.0,
+        32.69999694824219,
+        11.399999618530273
+      ],
+      "min_Z_mm": 0.0,
+      "max_Z_mm": 11.399999618530273,
+      "connected_components": 1,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "degenerate_triangles": 0,
+      "min_triangle_area_mm2": 0.00017900279544846853,
+      "duplicate_triangles": 0,
+      "stored_normal_mismatch_count": 0,
+      "signed_component_volumes_mm3": [
+        5557.846442891768
+      ],
+      "total_volume_mm3": 5557.846442891768,
+      "finite_coordinates": true,
+      "downward_facing_non_bed_area_mm2": 8.840012512208887,
+      "downward_face_groups_by_print_Z_mm": {
+        "9.4": {
+          "area_mm2": 8.840012512208887,
+          "xy_min": [
+            1.7999999523162842,
+            4.249998092651367
+          ],
+          "xy_max": [
+            62.20000076293945,
+            29.549999237060547
+          ],
+          "triangle_count": 8
+        }
+      },
+      "relative_volume_change_from_base": 1.906665853828281e-08
+    },
+    "03_button_row_1.stl": {
+      "sha256": "91dd0ba504342ebb0fa0feca792892c7a255b3e0d317c7ad0d465a3e50962bbf",
+      "triangles": 40,
+      "vertices_exact_weld": 22,
+      "nonmanifold_vertices": 0,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          25.099998474121094,
+          5.600000381469727,
+          1.3999998569488525
+        ]
+      ],
+      "dimensions_mm": [
+        25.099998474121094,
+        5.600000381469727,
+        1.3999998569488525
+      ],
+      "min_Z_mm": 0.0,
+      "max_Z_mm": 1.3999998569488525,
+      "connected_components": 1,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "degenerate_triangles": 0,
+      "min_triangle_area_mm2": 0.16000064849868068,
+      "duplicate_triangles": 0,
+      "stored_normal_mismatch_count": 0,
+      "signed_component_volumes_mm3": [
+        91.11681346499093
+      ],
+      "total_volume_mm3": 91.11681346499093,
+      "finite_coordinates": true,
+      "downward_facing_non_bed_area_mm2": 2.0947591737959095,
+      "downward_face_groups_by_print_Z_mm": {
+        "0.282": {
+          "area_mm2": 1.0473795868979547,
+          "xy_min": [
+            24.336200714111328,
+            1.6000003814697266
+          ],
+          "xy_max": [
+            25.099998474121094,
+            4.0
+          ],
+          "triangle_count": 1
+        },
+        "0.141": {
+          "area_mm2": 1.0473795868979547,
+          "xy_min": [
+            24.336200714111328,
+            1.6000003814697266
+          ],
+          "xy_max": [
+            25.099998474121094,
+            4.0
+          ],
+          "triangle_count": 1
+        }
+      },
+      "relative_volume_change_from_base": 0.0
+    },
+    "04_button_row_2.stl": {
+      "sha256": "be452585e59dde5adc60eaa7e9dfae9c1712f78c0a2014f906833ac7d6ddeb8d",
+      "triangles": 40,
+      "vertices_exact_weld": 22,
+      "nonmanifold_vertices": 0,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          25.099998474121094,
+          5.599998474121094,
+          1.3999998569488525
+        ]
+      ],
+      "dimensions_mm": [
+        25.099998474121094,
+        5.599998474121094,
+        1.3999998569488525
+      ],
+      "min_Z_mm": 0.0,
+      "max_Z_mm": 1.3999998569488525,
+      "connected_components": 1,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "degenerate_triangles": 0,
+      "min_triangle_area_mm2": 0.1600004577630898,
+      "duplicate_triangles": 0,
+      "stored_normal_mismatch_count": 0,
+      "signed_component_volumes_mm3": [
+        91.1168716366161
+      ],
+      "total_volume_mm3": 91.1168716366161,
+      "finite_coordinates": true,
+      "downward_facing_non_bed_area_mm2": 2.0947608385611933,
+      "downward_face_groups_by_print_Z_mm": {
+        "0.282": {
+          "area_mm2": 1.0473804192805967,
+          "xy_min": [
+            24.336200714111328,
+            1.5999984741210938
+          ],
+          "xy_max": [
+            25.099998474121094,
+            4.0
+          ],
+          "triangle_count": 1
+        },
+        "0.141": {
+          "area_mm2": 1.0473804192805967,
+          "xy_min": [
+            24.336200714111328,
+            1.5999984741210938
+          ],
+          "xy_max": [
+            25.099998474121094,
+            4.0
+          ],
+          "triangle_count": 1
+        }
+      },
+      "relative_volume_change_from_base": 6.238517394177629e-16
+    }
+  }
+}
