@@ -23,7 +23,7 @@ E1: 03 1D 07 06 2E 2C 29 2D 2E 2E 37 3F 00 00 02 10
 
 旧ライブラリの電源/VCOM、B1/B2/B3/B4、NORON、追加待ち時間、COLMOD55、INVOFF、MADCTL6Cは移さない。SPI0 GP18/19・CS17、20MHz、X/Yオフセット0/24、MADCTL60、INVON、受信/表示バッファ、Wi-Fi設定/PM、TCP/PWF2/PWS4は同じ。Pi側の反転＋R/B交換補正・画像縮小/黒余白も変えない。Bは追加34BのLCDコマンド/データを起動時に送るだけで、定常通信やフレームの画素を書き換えない。
 
-ソース: [診断ガンマ表](../../pico/lcd_gamma_lgfx.h)、[LCD初期化](../../pico/pico_player.c)、[切替オプション](../../CMakeLists.txt)。追加ブロックを取り除いたPicoソースは変更前と完全一致。実際の`lcd_init()`をホストCで実行し、Aの全初期化呼出しとBの差が上のE0/E1だけであることを確認した。
+ソース: [診断ガンマ表](../../pico/lcd_gamma_lgfx.h)、[LCD初期化](../../pico/lcd_display.h)、[切替オプション](../../CMakeLists.txt)。追加ブロックを取り除いたPicoソースは変更前と完全一致。実際の`lcd_init()`をホストCで実行し、Aの全初期化呼出しとBの差が上のE0/E1だけであることを確認した。
 
 ## 成果物と保全
 

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class LcdGammaTests(unittest.TestCase):
     def test_actual_lcd_init_adds_only_the_positive_negative_pair(self):
-        source = (ROOT / 'pico/pico_player.c').read_text()
+        source = (ROOT / 'pico/lcd_display.h').read_text()
         begin = source.index('static void lcd_register(')
         end = source.index('static void lcd_show(', begin)
         actual_init = source[begin:end]

@@ -6,6 +6,7 @@ endif()
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 option(PLAYER_CYW43_DIAG "Build with isolated CYW43 loss instrumentation" OFF)
 option(PLAYER_LCD_GAMMA_LGFX "Use the adopted ST7735S E0/E1 gamma pair" ON)
+option(PLAYER_ROTATE_180 "Rotate video pixels 180 degrees inside the verified LCD window" ON)
 if(PLAYER_CYW43_DIAG)
     set(PICO_CYW43_DRIVER_PATH "${CMAKE_CURRENT_LIST_DIR}/diagnostics/pico/cyw43-driver")
 endif()
@@ -35,7 +36,23 @@ pico_configure_ip4_address(pico_w_jpeg_player PRIVATE CYW43_DEFAULT_IP_STA_ADDRE
 pico_configure_ip4_address(pico_w_jpeg_player PRIVATE CYW43_DEFAULT_IP_STA_GATEWAY "${PLAYER_GATEWAY}")
 pico_configure_ip4_address(pico_w_jpeg_player PRIVATE CYW43_DEFAULT_IP_MASK "${PLAYER_NETMASK}")
 pico_configure_ip4_address(pico_w_jpeg_player PRIVATE CYW43_DEFAULT_IP_DNS "${PLAYER_DNS}")
+target_compile_definitions(pico_w_jpeg_player PRIVATE PLAYER_ROTATE_180=$<BOOL:${PLAYER_ROTATE_180}>)
 target_link_libraries(pico_w_jpeg_player pico_stdlib hardware_spi pico_cyw43_arch_lwip_threadsafe_background)
 pico_enable_stdio_usb(pico_w_jpeg_player 0)
 pico_enable_stdio_uart(pico_w_jpeg_player 0)
 pico_add_extra_outputs(pico_w_jpeg_player)
+
+# Stage1: a standalone target with no config.h, Wi-Fi, TCP or video dependency.
+# These are the checked current SPI0/LCD settings; no credential header is included.
+add_executable(pico_w_button_test EXCLUDE_FROM_ALL
+    diagnostics/pico/button_test.c diagnostics/pico/button_test_logic.c)
+target_include_directories(pico_w_button_test PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/pico ${CMAKE_CURRENT_LIST_DIR}/diagnostics/pico)
+target_compile_definitions(pico_w_button_test PRIVATE
+    DISPLAY_PROFILE=0 LCD_SPI_BAUD=20000000 LCD_MADCTL=0x60
+    LCD_X_OFFSET=0 LCD_Y_OFFSET=24 LCD_INVERT=1
+    PLAYER_LCD_GAMMA_LGFX=1 PLAYER_ROTATE_180=0)
+target_link_libraries(pico_w_button_test pico_stdlib hardware_spi)
+pico_enable_stdio_usb(pico_w_button_test 0)
+pico_enable_stdio_uart(pico_w_button_test 0)
+pico_add_extra_outputs(pico_w_button_test)

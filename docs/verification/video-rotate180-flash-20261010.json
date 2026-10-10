@@ -1,0 +1,52 @@
+{
+  "flashed_at": "2026-10-10T09:49:05.534495+09:00",
+  "journal_since": "2026-10-10 09:49:05",
+  "bus": 2,
+  "address": 4,
+  "flash_id": "0xE661640843239D21",
+  "sha256": "65900f5224c64efdde49e9652d035ad34416fb532212f92740396825b70eaa1c",
+  "verify": "100% OK",
+  "execute": "picotool -x success",
+  "button_test_user_result": "2026-10-10 09:47 JST: solder repair completed, patterns OK",
+  "physical_rotation_confirmation": "user confirmed orientation, colors and framing; device completion approved",
+  "server_reconnection": "confirmed",
+  "no_service_restart_or_settings_change": true,
+  "service": "MainPID=78888\nActiveState=active\nUnitFileState=enabled\n",
+  "playback": {
+    "current": {
+      "key": "5694a4d23b934438aac7fb49",
+      "video_id": "vEVq_Bx7_KY",
+      "start": 0,
+      "end": 441.0,
+      "fps": 6,
+      "bytes": 7126331,
+      "frames": 2643,
+      "conditions": "{\"audio\": false, \"color_compensation\": \"invert-and-swap-rb-at-send\", \"crop\": \"none\", \"height\": 80, \"jpeg_qscale\": 5, \"layout\": \"fit-black\", \"pixel_format\": \"yuvj420p\", \"scale\": \"scale=160:80:flags=bicubic:force_original_aspect_ratio=decrease:force_divisible_by=2:reset_sar=1,pad=160:80:(ow-iw)/2:(oh-ih)/2:color=black\", \"storage\": \"jpeg-directory\", \"version\": 3, \"width\": 160, \"wire_format\": \"rgb565be\"}",
+      "created": 1791460038.4354763,
+      "title": "【MV full】 Everyday、カチューシャ / AKB48[公式]",
+      "position": 303.2917794440097,
+      "loop": 302
+    },
+    "connected": true,
+    "sent": 27331,
+    "timeouts": 80,
+    "connections": 81,
+    "error": null,
+    "decode_us": 15385,
+    "decode_max_us": 47061
+  },
+  "received_and_displayed_growth": true,
+  "first_status": "2026-10-10T09:49:17+09:00 raspi5 python3[78888]: t=149218.729 Pico STA MAC=28:cd:c1:09:78:41 received=0 displayed=0 dropped=0 completed=0 complete_rate=starting render=off display_rate=disabled SPI=0/0 us pm_off=1 mode=raw-rx decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=6 lwip_seen=6 pbuf_fail=0 netif_input_fail=0 tcp_gap=0 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=0 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=1 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=0us rx_gap_max=0ms",
+  "last_status": "2026-10-10T09:49:31+09:00 raspi5 python3[78888]: t=149232.291 Pico STA MAC=28:cd:c1:09:78:41 received=29 displayed=29 dropped=1 completed=30 complete_rate=3.3 fps render=on display_rate=3.1 fps SPI=16559/30519 us pm_off=1 mode=raw-display decoded=0 decode_failed=0 decode_us=0/0 credit_wait=0 ack=0 status=0 other=0 wait_timeout=0 wait_max_us=0 credit_drop=0 credit_tcp_data=0 tx_buffer_changed=0 normal_rx=664 lwip_seen=664 pbuf_fail=0 netif_input_fail=0 tcp_gap=5 sdpcm_invalid=0 spi_read_error=0 spi_status_invalid=0 first_drop_ms=0 first_drop_seq=0x00000000 event_serial=5 pm_request=0x10(mode=0) pm_readback=mode=0 RSSI=-127dBm pbuf_max=18 pbuf_err=0 tcp_drop=0 tcp_memerr=0 rx_callback_max=1391us rx_gap_max=1593ms",
+  "received_delta": 29,
+  "displayed_delta": 29,
+  "bootsel_after": "absent",
+  "user_completion_confirmation": {
+    "reported_via": "親会話の実機目視報告",
+    "date_jst": "2026-10-10",
+    "buttons": "はんだ不良修理後、4ボタンのパターンテストOK（09:47 JST）",
+    "video": "180度回転版の実画面を確認し、向き・色・画面の収まりを含むYouTubeデバイス完成を承認",
+    "commit_authorized_at_jst": "2026-10-10 09:55",
+    "limits": "安定高FPSや長期耐久の測定結果ではない"
+  }
+}
