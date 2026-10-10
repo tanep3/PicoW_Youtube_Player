@@ -93,6 +93,8 @@ class Library:
         (self.root / "videos").mkdir(exist_ok=True)
         (self.root / "work").mkdir(exist_ok=True)
         self.lock = threading.RLock()
+        self.usage_lock = threading.Lock()
+        self.usage_scan_lock = threading.Lock()
         with self.db() as db:
             db.executescript("""
               CREATE TABLE IF NOT EXISTS videos (
@@ -111,6 +113,9 @@ class Library:
                 conditions TEXT NOT NULL, created REAL NOT NULL);
               CREATE TABLE IF NOT EXISTS preferences (key TEXT PRIMARY KEY, value TEXT);
             """)
+        # Include legacy files and incomplete work once at startup. HTTP polling
+        # reads the snapshot; only cache publication/removal rebuilds it.
+        self._usage = self._scan_usage()
 
     @contextlib.contextmanager
     def db(self):
@@ -223,19 +228,33 @@ class Library:
                     row.pop("path", None)
         return videos
 
-    def usage(self):
+    def _scan_usage(self):
         groups = {"source": 0, "converted": 0, "thumbnail": 0, "other": 0}
         for p in self.root.rglob("*"):
-            if not p.is_file() or p.is_symlink():
-                continue
-            relative = p.relative_to(self.root).parts
-            in_converted = len(relative) >= 4 and relative[0] == "videos" and relative[2] == "converted"
-            group = "converted" if in_converted or p.suffix in (".rgb565", ".zip") else "thumbnail" if p.name == "thumbnail.jpg" else "source" if p.parent.name == "sources" else "other"
-            groups[group] += p.stat().st_size
-        return {**groups, "total": sum(groups.values()), "free": shutil.disk_usage(self.root).free}
+            try:
+                if not p.is_file() or p.is_symlink():
+                    continue
+                relative = p.relative_to(self.root).parts
+                in_converted = len(relative) >= 4 and relative[0] == "videos" and relative[2] == "converted"
+                group = "converted" if in_converted or p.suffix in (".rgb565", ".zip") else "thumbnail" if p.name == "thumbnail.jpg" else "source" if p.parent.name == "sources" else "other"
+                groups[group] += p.stat().st_size
+            except FileNotFoundError:
+                continue  # A concurrent staging cleanup may remove this entry.
+        return {**groups, "total": sum(groups.values())}
+
+    def refresh_usage(self):
+        with self.usage_scan_lock:
+            groups = self._scan_usage()  # Never scan while holding the application lock.
+            with self.usage_lock:
+                self._usage = groups
+
+    def usage(self):
+        with self.usage_lock:
+            groups = dict(self._usage)
+        return {**groups, "free": shutil.disk_usage(self.root).free}
 
     def delete_video(self, identifier):
-        # App lock must already exclude playback and jobs for this record.
+        # Application marks this video as deleting before the slow filesystem work.
         directory = self.root / "videos" / identifier
         trash = self.root / "work" / ("delete-" + uuid.uuid4().hex)
         moved = False
@@ -253,3 +272,4 @@ class Library:
             raise
         if moved:
             shutil.rmtree(trash)
+        self.refresh_usage()

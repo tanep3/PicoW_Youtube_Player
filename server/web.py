@@ -7,13 +7,14 @@ import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
-from .library import BusyError, FPS_CHOICES, Library
+from .library import BusyError, FPS_CHOICES, Library, video_url
 from .media import MediaJobs
 from .playback import Playback
 
 class Application:
     def __init__(self, data_dir, yt_dlp="/usr/local/bin/yt-dlp", ffmpeg="/usr/local/bin/ffmpeg", ffprobe="/usr/local/bin/ffprobe", node=None):
         self.lock = threading.RLock()
+        self.deleting = set()
         self.library = Library(data_dir)
         self.playback = Playback(self.library, self.lock)
         self.jobs = MediaJobs(self.library, self.playback, self.lock, yt_dlp, ffmpeg, ffprobe, node)
@@ -24,43 +25,62 @@ class Application:
                 self.playback.select(conversion)
 
     def state(self):
-        with self.lock:
-            return {"playback": self.playback.state(), "job": self.jobs.state(),
-                    "history": self.library.history(), "usage": self.library.usage(),
-                    "fps_choices": FPS_CHOICES, "defaults": {"fps": 6, "start": 0, "end": None}}
+        return {"playback": self.playback.state(), "job": self.jobs.state(),
+                "history": self.library.history(), "usage": self.library.usage(),
+                "fps_choices": FPS_CHOICES, "defaults": {"fps": 6, "start": 0, "end": None}}
 
     def action(self, action, payload):
-        with self.lock:
-            if action == "prepare":
+        if action == "prepare":
+            identifier, _ = video_url(payload.get("url"))
+            with self.lock:
+                if identifier in self.deleting:
+                    raise BusyError("動画を削除中です")
                 return self.jobs.prepare(payload.get("url"), payload.get("fps", 6), payload.get("start"), payload.get("end"))
-            if action == "play":
-                conversion = self.library.conversion(payload.get("key"))
-                if not conversion:
-                    raise ValueError("完成キャッシュが見つかりません")
+        if action == "play":
+            conversion = self.library.conversion(payload.get("key"))
+            if not conversion:
+                raise ValueError("完成キャッシュが見つかりません")
+            with self.lock:
+                if conversion["video_id"] in self.deleting:
+                    raise BusyError("動画を削除中です")
+                with self.library.db() as db:
+                    if not db.execute("SELECT 1 FROM conversions WHERE key=?", (conversion["key"],)).fetchone():
+                        raise ValueError("完成キャッシュが見つかりません")
                 video = self.library.video(conversion["video_id"])
                 return self.jobs.prepare(video["url"], conversion["fps"], conversion["start"], conversion["end"])
-            if action == "fps":
+        if action == "fps":
+            with self.lock:
                 current = self.playback.current
                 if not current:
                     raise ValueError("再生中の動画がありません")
+                if current["video_id"] in self.deleting:
+                    raise BusyError("動画を削除中です")
                 return self.jobs.prepare(self.library.video(current["video_id"])["url"], payload.get("fps"), current["start"], current["end"])
-            if action == "stop":
-                self.playback.stop()
-                return {"stopped": True}
-            if action == "cancel":
-                self.jobs.cancel()
-                return {"cancelling": True}
-            if action == "delete":
-                identifier = payload.get("video_id")
+        if action == "stop":
+            self.playback.stop()
+            return {"stopped": True}
+        if action == "cancel":
+            self.jobs.cancel()
+            return {"cancelling": True}
+        if action == "delete":
+            identifier = payload.get("video_id")
+            with self.lock:
                 if not identifier or payload.get("confirmation") != identifier:
                     raise ValueError("削除する動画の確認が必要です")
+                if identifier in self.deleting:
+                    raise BusyError("動画を削除中です")
                 if self.playback.current and self.playback.current["video_id"] == identifier:
                     raise BusyError("再生を停止してから削除してください")
                 if self.jobs.job and self.jobs.job["video_id"] == identifier and self.jobs.job["status"] == "working":
                     raise BusyError("処理を取り消して完了を待ってから削除してください")
+                self.deleting.add(identifier)
+            try:
                 self.library.delete_video(identifier)
                 return {"deleted": identifier}
-            raise ValueError("不明な操作です")
+            finally:
+                with self.lock:
+                    self.deleting.remove(identifier)
+        raise ValueError("不明な操作です")
 
     def close(self):
         self.jobs.close()

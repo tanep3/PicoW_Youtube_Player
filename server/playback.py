@@ -10,6 +10,10 @@ from .frame_cache import FrameReader
 class Playback:
     def __init__(self, library, lock):
         self.library, self.lock = library, lock
+        self.send_gate = threading.Condition(lock)
+        self.reading = False
+        self.sending = False
+        self.transitions = 0
         self.current = None
         self.started = 0.0
         self.generation = 0
@@ -23,39 +27,60 @@ class Playback:
         self.force_first = False
         self.last_decode_us = self.max_decode_us = 0
 
-    def select(self, conversion):
-        with self.lock:
-            self.current = dict(conversion)
-            self.started = time.monotonic()
-            self.generation += 1
-            self.force_first = True
-            self.library.preference("current", conversion["key"])
-            with self.library.db() as db:
-                db.execute("UPDATE videos SET played=? WHERE id=?", (time.time(), conversion["video_id"]))
+    def select(self, conversion, check=None):
+        with self.send_gate:
+            self.transitions += 1
+            try:
+                while self.reading or self.sending:
+                    self.send_gate.wait()
+                if check:
+                    check()
+                self.current = dict(conversion)
+                self.started = time.monotonic()
+                self.generation += 1
+                self.force_first = True
+                self.library.preference("current", conversion["key"])
+                with self.library.db() as db:
+                    db.execute("UPDATE videos SET played=? WHERE id=?", (time.time(), conversion["video_id"]))
+            finally:
+                self.transitions -= 1
+                self.send_gate.notify_all()
 
     def stop(self):
-        with self.lock:
-            self.current = None
-            self.generation += 1
-            self.library.preference("current", None)
-            if self.conn:
-                try:
-                    self.conn.shutdown(socket.SHUT_RDWR)
-                except OSError:
-                    pass
+        with self.send_gate:
+            self.transitions += 1
+            try:
+                while self.reading or self.sending:
+                    self.send_gate.wait()
+                self.current = None
+                self.generation += 1
+                self.library.preference("current", None)
+                conn = self.conn
+            finally:
+                self.transitions -= 1
+                self.send_gate.notify_all()
+        if conn:
+            try:
+                conn.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
 
     def state(self):
         with self.lock:
             current = dict(self.current) if self.current else None
+            result = {"connected": self.connected, "sent": self.sent,
+                      "timeouts": self.timeouts, "connections": self.connections, "error": self.last_error,
+                      "decode_us": self.last_decode_us, "decode_max_us": self.max_decode_us}
+            started = self.started
             if current:
                 current.pop("path", None)
-                current["title"] = self.library.video(current["video_id"])["title"]
-                elapsed = max(0, time.monotonic() - self.started)
+                elapsed = max(0, time.monotonic() - started)
                 current["position"] = (elapsed * current["fps"] % current["frames"]) / current["fps"]
                 current["loop"] = int(elapsed * current["fps"] / current["frames"])
-            return {"current": current, "connected": self.connected, "sent": self.sent,
-                    "timeouts": self.timeouts, "connections": self.connections, "error": self.last_error,
-                    "decode_us": self.last_decode_us, "decode_max_us": self.max_decode_us}
+        if current:
+            video = self.library.video(current["video_id"])
+            current["title"] = video["title"] if video else ""
+        return {"current": current, **result}
 
     def start(self, host, port):
         self.listener = socket.socket()
@@ -118,14 +143,7 @@ class Playback:
                     self.closed.wait(0.05)
                     continue
                 if generation != opened_generation:
-                    with self.lock:
-                        if self.generation != generation:
-                            continue
-                        if source:
-                            source.close()
-                        source = FrameReader(self.library.path(current["path"]), current)
-                        opened_generation = generation
-                        next_sequence = 0
+                    next_sequence = 0
                 due = int(max(0, time.monotonic() - started) * current["fps"])
                 if first:
                     sequence = 0
@@ -134,21 +152,43 @@ class Playback:
                         self.closed.wait(min(0.03, (next_sequence-due)/current["fps"]))
                         continue
                     sequence = due
-                decode_started = time.monotonic_ns()
-                payload = source.read(sequence % current["frames"])
-                self.last_decode_us = (time.monotonic_ns()-decode_started)//1000 if source.kind == "jpeg" else 0
-                self.max_decode_us = max(self.max_decode_us, self.last_decode_us)
-                # Lock through one send prevents deletion or an old frame after a completed switch.
-                with self.lock:
-                    if self.generation != generation:
+                with self.send_gate:
+                    if self.generation != generation or self.transitions:
                         continue
-                    conn.sendall(packet(sequence, payload))
-                    self.sent += 1
-                    self.force_first = False
-                    if first:
-                        # Start the timeline at the first successful frame after ready.
-                        self.started = time.monotonic()
-                        started = self.started
+                    self.reading = True
+                try:
+                    if generation != opened_generation:
+                        if source:
+                            source.close()
+                        source = FrameReader(self.library.path(current["path"]), current)
+                        opened_generation = generation
+                    decode_started = time.monotonic_ns()
+                    payload = source.read(sequence % current["frames"])
+                    self.last_decode_us = (time.monotonic_ns()-decode_started)//1000 if source.kind == "jpeg" else 0
+                    self.max_decode_us = max(self.max_decode_us, self.last_decode_us)
+                    frame = packet(sequence, payload)
+                finally:
+                    with self.send_gate:
+                        self.reading = False
+                        self.send_gate.notify_all()
+                with self.send_gate:
+                    if self.generation != generation or self.transitions:
+                        continue
+                    self.sending = True
+                sent_ok = False
+                try:
+                    conn.sendall(frame)  # No application lock held during network I/O.
+                    sent_ok = True
+                finally:
+                    with self.send_gate:
+                        if sent_ok:
+                            self.sent += 1
+                            self.force_first = False
+                            if first:
+                                self.started = time.monotonic()
+                                started = self.started
+                        self.sending = False
+                        self.send_gate.notify_all()
                 next_sequence = sequence + 1
         finally:
             if source:
@@ -156,12 +196,20 @@ class Playback:
 
     def close(self):
         self.closed.set()
-        with self.lock:
-            if self.conn:
-                try:
-                    self.conn.shutdown(socket.SHUT_RDWR)
-                except OSError:
-                    pass
+        with self.send_gate:
+            self.transitions += 1
+            try:
+                while self.reading or self.sending:
+                    self.send_gate.wait()
+                conn = self.conn
+            finally:
+                self.transitions -= 1
+                self.send_gate.notify_all()
+        if conn:
+            try:
+                conn.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
         # Preserve the chosen cache on shutdown; only the user's Stop clears it.
         if self.listener:
             self.listener.close()

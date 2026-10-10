@@ -2,6 +2,7 @@ import contextlib
 import http.client
 import json
 import io
+import os
 import zipfile
 import socket
 import struct
@@ -122,7 +123,28 @@ class WebTests(Fixture):
 
     def test_jpeg_folder_usage_counts_frames_as_converted(self):
         item=self.conversion()
+        self.app.library.refresh_usage()  # The fixture publishes files outside MediaJobs.
         self.assertEqual(self.app.library.usage()["converted"],item["bytes"])
+
+    def test_hour_long_cache_state_uses_usage_snapshot(self):
+        count=6*3600
+        folder=self.app.library.video_dir(VIDEO)/"converted"/"hour"
+        folder.mkdir(parents=True)
+        seed=folder/frame_name(0)
+        seed.write_bytes(b"jpeg")
+        for i in range(1,count):
+            os.link(seed,folder/frame_name(i))
+        with self.app.library.db() as db:
+            db.execute("INSERT INTO conversions VALUES(?,?,?,?,?,?,?,?,?,?)",
+                       ("hour",VIDEO,0,3600,6,str(folder.relative_to(self.app.library.root)),
+                        4*count,count,json.dumps(CONDITIONS),time.time()))
+        self.app.library.refresh_usage()
+        self.assertEqual(self.app.library.usage()["converted"],4*count)
+        with patch.object(self.app.library,"_scan_usage",side_effect=AssertionError("state rescanned files")):
+            for _ in range(3):
+                state=self.app.state()
+                self.assertEqual(state["usage"]["converted"],4*count)
+                self.assertEqual(state["history"][0]["conversions"][0]["frames"],count)
 
     def test_partial_source_never_covers_other_interval(self):
         p = self.app.library.video_dir(VIDEO)/"source.mp4";p.write_bytes(b"source")
@@ -249,6 +271,27 @@ class WebTests(Fixture):
         self.assertIsNotNone(self.app.library.video(other))
         self.assertEqual(len(self.app.library.history()),1)
 
+    def test_delete_does_not_hold_state_lock_and_blocks_same_video_prepare(self):
+        entered,release=threading.Event(),threading.Event()
+        def slow_delete(identifier):
+            entered.set()
+            self.assertTrue(release.wait(2))
+        with patch.object(self.app.library,"delete_video",side_effect=slow_delete):
+            deleter=threading.Thread(target=lambda:self.app.action("delete",{"video_id":VIDEO,"confirmation":VIDEO}))
+            deleter.start()
+            try:
+                self.assertTrue(entered.wait(2))
+                result=[]
+                reader=threading.Thread(target=lambda:result.append(self.app.state()))
+                reader.start();reader.join(.5)
+                self.assertFalse(reader.is_alive(),"state waited for deletion")
+                self.assertEqual(len(result[0]["history"]),1)
+                with self.assertRaises(BusyError):
+                    self.app.action("prepare",{"url":URL})
+            finally:
+                release.set();deleter.join(2)
+            self.assertFalse(deleter.is_alive())
+
     def test_tcp_switch_frame_zero_pacing_stop_and_reconnect(self):
         a=self.conversion();other="lmnopqrstuv"
         self.app.library.save_video(other,"https://youtu.be/"+other,{"duration":4})
@@ -283,6 +326,34 @@ class WebTests(Fixture):
                     if not client.recv(30000):break
                 except ConnectionResetError:break
         self.assertGreaterEqual(self.app.playback.connections,2)
+
+    def test_state_does_not_wait_for_blocked_send_and_stop_orders_after_it(self):
+        item=self.conversion(storage="raw")
+        self.app.playback.select(item)
+        entered,release=threading.Event(),threading.Event()
+        class SlowConnection:
+            def sendall(self, data):
+                entered.set()
+                if not release.wait(2):raise TimeoutError()
+        stream=threading.Thread(target=self.app.playback._stream,args=(SlowConnection(),))
+        stream.start()
+        try:
+            self.assertTrue(entered.wait(2))
+            result=[]
+            reader=threading.Thread(target=lambda:result.append(self.app.state()))
+            reader.start();reader.join(.5)
+            self.assertFalse(reader.is_alive(),"state waited for socket send")
+            self.assertTrue(result[0]["playback"]["current"])
+            stopped=threading.Event()
+            stopper=threading.Thread(target=lambda:(self.app.playback.stop(),stopped.set()))
+            stopper.start()
+            self.assertFalse(stopped.wait(.05),"stop overtook an in-flight frame")
+            release.set();stopper.join(2);stream.join(2)
+            self.assertTrue(stopped.is_set())
+            self.assertFalse(stream.is_alive())
+            self.assertIsNone(self.app.playback.current)
+        finally:
+            release.set()
 
     def test_https_missing_is_clear_and_never_falls_back_to_whole(self):
         self.app.jobs.job={"status":"working"}

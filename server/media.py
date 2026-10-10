@@ -315,9 +315,11 @@ class MediaJobs:
     def _work(self, job):
         work = self.library.root / "work" / job["id"]
         work.mkdir()
+        cache_changed = usage_refreshed = False
         try:
             video = self.library.video(job["video_id"])
             if not video:
+                cache_changed = True
                 info = json.loads(self._run(self._yt_base() + ["--skip-download", "--dump-single-json", job["url"]]))
                 if info.get("id") != job["video_id"] or info.get("_type") == "playlist":
                     raise ValueError("単一動画の情報を取得できません")
@@ -329,14 +331,18 @@ class MediaJobs:
             conversion = self.library.conversion(key)
             reused = bool(conversion)
             if not conversion:
+                cache_changed = True
                 source = self.library.find_source(job["video_id"], start, end)
                 if not source:
                     source = self._download(job, start, end, video["duration"], work)
                 conversion = self.convert(source, job["video_id"], start, end, job["fps"], work)
+            if cache_changed:
+                self.library.refresh_usage()
+                usage_refreshed = True
             self._check()
             with self.lock:
                 self._check()
-                self.playback.select(conversion)
+                self.playback.select(conversion, check=self._check)
                 self._update(status="ready", stage="ready", progress=100, reused=reused,
                              message="キャッシュから再生しました" if reused else "変換完了・先頭から再生します", finished=time.time())
         except Cancelled:
@@ -346,6 +352,8 @@ class MediaJobs:
         finally:
             # Only this job's incomplete staging is removed. Completed caches are never auto-evicted.
             shutil.rmtree(work, ignore_errors=True)
+            if cache_changed and not usage_refreshed:
+                self.library.refresh_usage()
 
     def close(self):
         self.cancel()
